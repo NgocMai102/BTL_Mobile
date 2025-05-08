@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Selected: full opacity white -->
-    <item android:color="@color/white" android:state_checked="true" />
-    <!-- Not selected: semi-transparent white -->
-    <item android:color="#80FFFFFF" /> <!-- 50% opacity white -->
+    <item android:color="#19A7CE" android:state_checked="true" />
+    <item android:color="#000000" /> <!-- black when not selected -->
 </selector>
