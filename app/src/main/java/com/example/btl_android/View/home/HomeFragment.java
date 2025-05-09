@@ -1,30 +1,50 @@
 package com.example.btl_android.View.home;
 
+import static com.example.btl_android.Helper.ViewExtention.showToast;
+
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
+
+import com.example.btl_android.Helper.Constants;
+import com.example.btl_android.Model.DanhMuc;
+import com.example.btl_android.Model.GiaoDich;
 import com.example.btl_android.R;
 import com.example.btl_android.databinding.FragmentHomeBinding;
 import java.util.Calendar;
+import java.util.List;
 
 public class HomeFragment extends Fragment {
+    private static final String TAG = "HomeFragment";
     private FragmentHomeBinding binding;
+    private HomeViewModel viewModel;
     private boolean trangThai;
-    private Calendar calendar;
+    Calendar calendar;
+    private DirectoryAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = FragmentHomeBinding.inflate(getLayoutInflater());
+        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        viewModel._getDanhMucThu(requireContext());
+        viewModel._getDanhMucChi(requireContext());
         calendar = Calendar.getInstance();
         trangThai = true;
+        adapter = new DirectoryAdapter(null);
+        getDanhMucChi();
     }
 
     @Override
@@ -33,35 +53,21 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         loadView();
         return binding.getRoot();
+
     }
 
     private void loadView() {
-        updateDateText();
-
-        binding.btnAccept.setOnClickListener(v -> {
-            // UI only: No actual logic
-        });
-
-        binding.btnTienChi.setOnClickListener(v -> {
-            trangThai = true;
-            onClickTienChi();
-        });
-
-        binding.btnTienThu.setOnClickListener(v -> {
-            trangThai = false;
-            onClickTienThu();
-        });
-
-        binding.tvDay.setOnClickListener(v -> showDatePicker());
-
-        binding.imvBackDay.setOnClickListener(v -> {
-            calendar.add(Calendar.DAY_OF_MONTH, -1);
-            updateDateText();
-        });
-
-        binding.imvIncreaseDay.setOnClickListener(v -> {
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-            updateDateText();
+        binding.tvDay.setText(calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR));
+        binding.recyclerview.setAdapter(adapter);
+        binding.btnAccept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (binding.edtSpendingMoney.getEditText().getText().toString().isEmpty()) {
+                    showToast(requireContext(), Constants.PLS_ENTER_THE_AMOUNT);
+                } else {
+                    updateSpending();
+                }
+            }
         });
 
         binding.SpendInput.addTextChangedListener(new TextWatcher() {
@@ -96,24 +102,64 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        binding.btnTienChi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                trangThai = true;
+                onClickTienChi();
+            }
+        });
+        binding.btnTienThu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                trangThai = false;
+                onClickTienThu();
+            }
+        });
+        binding.tvDay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickday();
+            }
+        });
+        binding.imvBackDay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar.add(Calendar.DAY_OF_MONTH, -1);
+                String selectedDate = calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR); // Month is zero-based
+                binding.tvDay.setText(selectedDate + "");
+            }
+        });
+        binding.imvIncreaseDay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+                String selectedDate = calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR); // Month is zero-based
+                binding.tvDay.setText(selectedDate + "");
+            }
+        });
+
     }
 
-    private void updateDateText() {
-        binding.tvDay.setText(calendar.get(Calendar.DAY_OF_MONTH) + "/" +
-                (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR));
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
-    private void showDatePicker() {
+    private void onClickday() {
         DatePickerDialog datePicker = new DatePickerDialog(
-                requireContext(), (view, year, month, dayOfMonth) -> {
-            calendar.set(Calendar.YEAR, year);
-            calendar.set(Calendar.MONTH, month);
-            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            updateDateText();
+                requireContext(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int yearPicker, int monthPicker, int dayOfMonthPicker) {
+                calendar.set(Calendar.YEAR, yearPicker);
+                calendar.set(Calendar.MONTH, monthPicker );
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonthPicker);
+                String selectedDate = calendar.get(Calendar.DAY_OF_MONTH) + "/" +
+                        (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR); // Month is zero-based
+                binding.tvDay.setText(selectedDate);
+            }
         },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
+                calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)
         );
         datePicker.show();
     }
@@ -128,8 +174,8 @@ public class HomeFragment extends Fragment {
         binding.btnTienChi.setTextColor(ContextCompat.getColor(requireContext(), R.color.bluenav));
 
         // Update other UI if needed
-        binding.btnAccept.setText("Nhập khoản tiền thu");
-        binding.tvSpendingMoneyOrRevenue.setText("Tiền thu");
+        binding.tvSpendingMoneyOrRevenue.setText(Constants.TIEN_THU);
+        binding.btnAccept.setText(Constants.BTN_TIEN_THU);
     }
 
     private void onClickTienChi() {
@@ -142,7 +188,60 @@ public class HomeFragment extends Fragment {
         binding.btnTienThu.setTextColor(ContextCompat.getColor(requireContext(), R.color.bluenav));
 
         // Update other UI if needed
-        binding.btnAccept.setText("Nhập khoản tiền chi");
-        binding.tvSpendingMoneyOrRevenue.setText("Tiền chi");
+        binding.tvSpendingMoneyOrRevenue.setText(Constants.TIEN_CHI);
+        binding.btnAccept.setText(Constants.BTN_TIEN_CHI);
     }
+
+    private void getDanhMucChi() {
+        viewModel._getDanhMucChi(requireContext());
+        viewModel.danhMucChi().observe(this, new Observer<List<DanhMuc>>() {
+            @Override
+            public void onChanged(List<DanhMuc> danhMucs) {
+                adapter.setAdapter(danhMucs);
+            }
+        });
+    }
+
+    private void getDanhMucThu() {
+        viewModel._getDanhMucThu(requireContext());
+        viewModel.danhMucThu().observe(this, new Observer<List<DanhMuc>>() {
+            @Override
+            public void onChanged(List<DanhMuc> danhMucs) {
+                adapter.setAdapter(danhMucs);
+            }
+        });
+    }
+
+    private void updateSpending() {
+        try {
+            // Remove commas from the input string
+            String rawAmount = binding.edtSpendingMoney.getEditText().getText().toString().replace(",", "").trim();
+            long amount = Long.parseLong(rawAmount);
+
+            GiaoDich giaoDich = new GiaoDich(
+                    0,
+                    calendar.get(Calendar.DAY_OF_MONTH),
+                    calendar.get(Calendar.MONTH) + 1,
+                    calendar.get(Calendar.YEAR),
+                    amount,
+                    binding.edtNote.getEditText().getText().toString(),
+                    trangThai,
+                    adapter.getDanhMuc().getId()
+            );
+
+            viewModel.set_giaoDich(requireContext(), giaoDich);
+            showToast(requireContext(), Constants.ADD_SUCCESSFUL);
+
+            // Clear fields
+            binding.edtNote.getEditText().setText("");
+            binding.edtSpendingMoney.getEditText().setText("");
+        } catch (NumberFormatException e) {
+            showToast(requireContext(), "Số tiền không hợp lệ");
+            Log.e("updateSpending", "Invalid number format", e);
+        }
+    }
+
+
 }
+
+
