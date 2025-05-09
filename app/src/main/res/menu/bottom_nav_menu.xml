@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_home"
-        android:icon="@drawable/pencil"
+        android:icon="@drawable/icon_pencil"
         android:title="Nhập vào"/>
     <item
         android:id="@+id/nav_calendar"
