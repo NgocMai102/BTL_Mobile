@@ -29,11 +29,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <androidx.appcompat.widget.AppCompatButton
-                android:layout_gravity="center"
                 android:id="@+id/btn_tien_chi"
                 android:layout_width="106dp"
                 android:layout_height="25dp"
-                android:background="#0C71E7"
+                android:background="@drawable/rounded_blue"
                 android:text="Tiền chi"
                 android:textColor="@color/white" />
         </LinearLayout>
@@ -45,13 +44,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <androidx.appcompat.widget.AppCompatButton
-                android:layout_gravity="center"
                 android:id="@+id/btn_tien_thu"
                 android:layout_width="106dp"
                 android:layout_height="25dp"
-                android:background="@drawable/border_btn_tienthu"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/rounded_gray"
                 android:text="Tiền thu"
-                android:textColor="#0C71E7" />
+                android:textColor="@color/primary" />
+
         </LinearLayout>
 
         <ImageButton
