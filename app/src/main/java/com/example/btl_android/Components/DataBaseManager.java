@@ -57,7 +57,7 @@ public abstract class DataBaseManager extends RoomDatabase {
     }
 
     private static void prepopulateDatabase(Queries qu, Context context) {
-        qu.themDanhMuc(new DanhMuc(1, convertDrawableToBase64(context, R.drawable.icon_tableware), "Ăn uống", true));
+        qu.themDanhMuc(new DanhMuc(1, convertDrawableToBase64(context, R.drawable.icon_eat_and_drink), "Ăn uống", true));
         qu.themDanhMuc(new DanhMuc(2, convertDrawableToBase64(context, R.drawable.icon_grocery), "Chi tiêu hàng ngày", true));
         qu.themDanhMuc(new DanhMuc(3, convertDrawableToBase64(context, R.drawable.icon_jersey), "Quần áo", true));
         qu.themDanhMuc(new DanhMuc(4, convertDrawableToBase64(context, R.drawable.icon_lipstick), "Mỹ phẩm", true));
