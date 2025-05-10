@@ -9,6 +9,8 @@ import androidx.room.Update;
 
 import com.example.btl_android.Model.DanhMuc;
 import com.example.btl_android.Model.GiaoDich;
+import com.example.btl_android.Model.HoaDon;
+import com.example.btl_android.Model.NguoiDung;
 import com.example.btl_android.Model.SpendingInChart;
 
 import java.util.List;
@@ -67,5 +69,16 @@ public interface Queries {
     public List<DanhMuc> timKiemDanhMucThu();
 
     @Delete
-    public Integer xoaDanhMuc(DanhMuc danhMuc);
+    public Integer xoaDanhMuc(DanhMuc danhMuc);  @Query("SELECT * from HoaDon")
+    public List<HoaDon> getAllHoaDon();
+
+    @Delete
+    public Integer xoaHoaDon(HoaDon hoaDon);
+
+    @Query("SELECT * from NguoiDung where IdHoaDon = :id")
+    public List<NguoiDung> timKiemNguoiDungTheoHoaDon(Long id);
+
+    @Query("Delete from NguoiDung where IdHoaDon = :id")
+    public Integer xoaNguoiDung(Long id);
+
 }
