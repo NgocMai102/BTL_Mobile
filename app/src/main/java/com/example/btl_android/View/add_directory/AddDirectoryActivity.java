@@ -15,17 +15,13 @@ import com.example.btl_android.Model.DanhMuc;
 import com.example.btl_android.databinding.ActivityAddDirectoryBinding;
 
 public class AddDirectoryActivity extends AppCompatActivity {
-
     private AddDirectoryViewModel viewModel;
-
     private ActivityAddDirectoryBinding binding;
-
     private AddDirectoryAdapter adapter;
-
     private int id;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityAddDirectoryBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

@@ -47,6 +47,15 @@ public class AddDirectoryAdapter extends RecyclerView.Adapter<AddDirectoryAdapte
 
     private int item = 0;
 
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        private final ItemAddDirectoryBinding binding;
+
+        public ViewHolder(ItemAddDirectoryBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+    }
+
     @Override
     public AddDirectoryAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ItemAddDirectoryBinding binding = ItemAddDirectoryBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
@@ -75,15 +84,6 @@ public class AddDirectoryAdapter extends RecyclerView.Adapter<AddDirectoryAdapte
 
     public int getIcon() {
         return listDirectory.get(item);
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final ItemAddDirectoryBinding binding;
-
-        public ViewHolder(ItemAddDirectoryBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
-        }
     }
 
 }

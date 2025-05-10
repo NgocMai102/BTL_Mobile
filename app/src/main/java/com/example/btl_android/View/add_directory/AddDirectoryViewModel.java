@@ -21,7 +21,7 @@ public class AddDirectoryViewModel extends ViewModel {
     public LiveData<Integer> blXoaDanhMuc(){
         return _blXoaDanhMuc;
     }
-    public void deleteDanhMuc(Context context, DanhMuc danhMuc) {
+    public void deleteDanhMuc(Context context, DanhMuc danhMuc){
         _blXoaDanhMuc.setValue(DataBaseManager.getInstance(context).getItemDAO().xoaDanhMuc(danhMuc));
     }
 }
