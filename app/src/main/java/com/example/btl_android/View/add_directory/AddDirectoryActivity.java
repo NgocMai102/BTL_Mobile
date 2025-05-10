@@ -30,9 +30,9 @@ public class AddDirectoryActivity extends AppCompatActivity {
         id = getIntent().getIntExtra("id", -1);
         String mode = getIntent().getStringExtra("mode");
         if ("edit".equals(mode)) {
-            binding.textViewTitle.setText("Chỉnh sửa danh mục");
+            binding.txtTitle.setText("Chỉnh sửa danh mục");
         } else {
-            binding.textViewTitle.setText("Thêm danh mục");
+            binding.txtTitle.setText("Thêm danh mục");
         }
         if (id != -1) {
             binding.edtName.getEditText().setText(getIntent().getStringExtra("name"));
