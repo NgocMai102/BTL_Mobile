@@ -1,11 +1,14 @@
 package com.example.btl_android.View.calendar;
 
+import java.text.DecimalFormat;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -22,9 +25,12 @@ import com.example.btl_android.R;
 import com.example.btl_android.View.edit_spending.EditSpendingActivity;
 import com.example.btl_android.databinding.FragmentCalendarBinding;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class CalendarFragment extends Fragment {
     private FragmentCalendarBinding binding;
@@ -37,6 +43,8 @@ public class CalendarFragment extends Fragment {
     private CalendarViewModel viewModel;
     private SharedPreferences sharedPreferences;
 
+    DecimalFormat formatter = new DecimalFormat("#,###");
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,10 +56,9 @@ public class CalendarFragment extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences("my_preferences", Context.MODE_PRIVATE);
         adapter = new CalendarAdapter(new CalendarAdapter.ClickListener() {
             @Override
-            public void onClickDelete() {
+            public void onClickDelete(SpendingInCalendar spending, int position) {
                 clickDelete();
             }
-
             @Override
             public void onClickSpending(SpendingInCalendar spendingInCalendar) {
                 clickSpending(spendingInCalendar);
@@ -70,7 +77,8 @@ public class CalendarFragment extends Fragment {
                 listSpending.clear();
                 listSpending.addAll(spendingInCalendars);
                 listAdapter.addAll(spendingInCalendars);
-                adapter.setAdapter(day + "/" + month + "/" + year, listAdapter);
+                String formattedDate = String.format(Locale.getDefault(), "%02d/%02d/%04d", day, month, year);
+                adapter.setAdapter(formattedDate, listAdapter);
             }
         });
     }
@@ -94,7 +102,7 @@ public class CalendarFragment extends Fragment {
         return binding.getRoot();
     }
 
-    // Hàm get lại data khi có sự thay đổi tuwf ngày tháng
+    // Hàm get lại data khi có sự thay đổi từ ngày tháng
     @Override
     public void onResume() {
         getData(
@@ -105,7 +113,8 @@ public class CalendarFragment extends Fragment {
         getTotal(calendar.get(Calendar.MONTH) + 1);
         super.onResume();
     }
-    // Hàm get số tiền thu, tieen chi trong 1 tháng và đưa vào text view
+
+    // Hàm get số tiền thu, tiền chi trong 1 tháng và đưa vào text view
     private void getTotal(int month) {
         viewModel.getGiaoDichChiThang(requireContext(), month);
         viewModel.getGiaoDichThuThang(requireContext(), month);
@@ -113,21 +122,27 @@ public class CalendarFragment extends Fragment {
             @Override
             public void onChanged(List<Long> longs) {
                 long totalSpending = longs.stream().reduce(0L, Long::sum);
-                binding.tvSpendingMoney.setText(totalSpending + " đ");
+                binding.tvSpendingMoney.setText(formatter.format(totalSpending) + " đ");
+
                 viewModel.giaoDichThuThang().observe(getViewLifecycleOwner(), new Observer<List<Long>>() {
                     @Override
                     public void onChanged(List<Long> longs) {
                         long totalRevenue = longs.stream().reduce(0L, Long::sum);
-                        binding.tvRevenue.setText(totalRevenue + " đ");
-                        binding.tvTotal.setText((totalRevenue - totalSpending) + " đ");
+                        long total = totalRevenue - totalSpending;
+
+                        binding.tvRevenue.setText(formatter.format(totalRevenue) + " đ");
+                        binding.tvTotal.setText(formatter.format(total) + " đ");
+
+                        if (total >= 0) {
+                            binding.tvTotal.setTextColor(ContextCompat.getColor(getContext(), R.color.primary));
+                        } else {
+                            binding.tvTotal.setTextColor(ContextCompat.getColor(getContext(), R.color.red));
+                        }
                     }
                 });
             }
+
         });
-    }
-    // Hàm xóa 1 giao dịch khi nhấn giữ vào 1 item trong list
-    private void clickDelete() {
-        showYesNoDialog();
     }
 
     // Hàm click vào 1 item ở list
@@ -136,7 +151,11 @@ public class CalendarFragment extends Fragment {
         intent.putExtra("idGiaoDich", Long.valueOf(spendingInCalendar.getId()));
         startActivity(intent);
     }
-    // Hàm xóa 1 giao dịch khi nhấn giữ vào 1 item trong list
+
+    private void clickDelete() {
+        showYesNoDialog();
+    }
+
     private void showYesNoDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Câu hỏi")

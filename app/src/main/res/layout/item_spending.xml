@@ -52,4 +52,20 @@
         android:layout_height="wrap_content"
         android:text="100,000đ" />
 
+    <Space
+        android:layout_width="16dp"
+        android:layout_height="wrap_content"/>
+
+    <!-- Nút Delete -->
+    <ImageView
+        android:id="@+id/imv_delete"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/icon_delete"
+        android:contentDescription="Delete"/>
+
+    <Space
+        android:layout_width="5dp"
+        android:layout_height="wrap_content"/>
+
 </LinearLayout>

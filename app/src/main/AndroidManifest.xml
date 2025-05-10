@@ -23,6 +23,7 @@
         </activity>
         <activity android:name=".View.edit_directory.EditDirectoryActivity" />
         <activity android:name=".View.add_directory.AddDirectoryActivity" />
+        <activity android:name=".View.edit_spending.EditSpendingActivity" />
     </application>
 
 </manifest>
