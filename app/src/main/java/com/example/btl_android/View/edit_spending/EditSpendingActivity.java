@@ -133,7 +133,7 @@ public class EditSpendingActivity extends AppCompatActivity {
 
     private void onClickTienThu() {
         getDanhMucThu();
-        binding.btnTienThu.setBackgroundResource(R.color.primary);
+        binding.btnTienThu.setBackgroundResource(R.drawable.rounded_blue);
         binding.btnTienThu.setTextColor(ContextCompat.getColor(EditSpendingActivity.this, R.color.white));
         binding.btnTienChi.setBackgroundResource(R.drawable.border_btn_tienthu);
         binding.btnTienChi.setTextColor(ContextCompat.getColor(EditSpendingActivity.this, R.color.primary));
@@ -142,7 +142,7 @@ public class EditSpendingActivity extends AppCompatActivity {
 
     private void onClickTienChi() {
         getDanhMucChi();
-        binding.btnTienChi.setBackgroundResource(R.color.primary);
+        binding.btnTienChi.setBackgroundResource(R.drawable.rounded_blue);
         binding.btnTienChi.setTextColor(ContextCompat.getColor(EditSpendingActivity.this, R.color.white));
         binding.btnTienThu.setBackgroundResource(R.drawable.border_btn_tienthu);
         binding.btnTienThu.setTextColor(ContextCompat.getColor(EditSpendingActivity.this, R.color.primary));
@@ -192,12 +192,30 @@ public class EditSpendingActivity extends AppCompatActivity {
                             gd.getNamGiaoDich());
                     binding.edtNote.getEditText().setText(gd.getGhiChu());
                     binding.edtSpendingMoney.getEditText().setText(gd.getTien().toString());
-                    calendar.set(gd.getNamGiaoDich(), gd.getThangGiaoDich() - 1, gd.
-                            getNgayGiaoDich());
+                    calendar.set(gd.getNamGiaoDich(), gd.getThangGiaoDich() - 1, gd.getNgayGiaoDich());
+
                     if (gd.getThuChi())
                         onClickTienChi();
                     else
                         onClickTienThu();
+
+                    // Chờ danh sách danh mục được tải xong rồi mới set chọn đúng danh mục
+                    long idDanhMuc = gd.getIdDanhMuc();
+                    viewModel.danhMucChi().observe(EditSpendingActivity.this, new Observer<List<DanhMuc>>() {
+                        @Override
+                        public void onChanged(List<DanhMuc> danhMucs) {
+                            adapter.setAdapter(danhMucs);
+                            adapter.setSelectedById(idDanhMuc);
+                        }
+                    });
+
+                    viewModel.danhMucThu().observe(EditSpendingActivity.this, new Observer<List<DanhMuc>>() {
+                        @Override
+                        public void onChanged(List<DanhMuc> danhMucs) {
+                            adapter.setAdapter(danhMucs);
+                            adapter.setSelectedById(idDanhMuc);
+                        }
+                    });
                 }
             });
         }

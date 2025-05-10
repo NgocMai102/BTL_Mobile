@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
@@ -17,8 +18,6 @@ import com.example.btl_android.Model.DanhMuc;
 import com.example.btl_android.R;
 import com.example.btl_android.View.add_directory.AddDirectoryActivity;
 import com.example.btl_android.databinding.ActivityEditDirectoryBinding;
-
-import kotlinx.coroutines.Dispatchers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,8 +128,9 @@ public class EditDirectoryActivity extends AppCompatActivity {
 
     private void edit(DanhMuc danhMuc) {
         Intent intent = new Intent(this, AddDirectoryActivity.class);
-        intent.putExtra("name", adapter.getDanhMuc().getTenDanhMuc());
-        intent.putExtra("id", adapter.getDanhMuc().getId());
+        intent.putExtra("name", danhMuc.getTenDanhMuc());
+        intent.putExtra("id", danhMuc.getId());
+        intent.putExtra("icon", danhMuc.getIcon());
         intent.putExtra("mode", "edit");
         startActivity(intent);
     }
@@ -142,7 +142,13 @@ public class EditDirectoryActivity extends AppCompatActivity {
                         "hoàn tác lại.")
                 .setPositiveButton("Có", (dialog, which) -> {
                     viewModel.deleteDanhMuc(this, danhMuc);
+                    if (thuCHi) {
+                        getDataCHi();
+                    } else {
+                        getDataThu();
+                    }
                     dialog.dismiss();
+                    Toast.makeText(this, "Đã xoá danh mục", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Không", (dialog, which) -> {
                     dialog.dismiss();

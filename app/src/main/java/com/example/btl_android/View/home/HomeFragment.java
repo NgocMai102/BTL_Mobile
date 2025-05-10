@@ -152,6 +152,12 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        viewModel._getDanhMucThu(requireContext());
+        viewModel._getDanhMucChi(requireContext());
+        calendar = Calendar.getInstance();
+        trangThai = true;
     }
 
     private void onClickday() {

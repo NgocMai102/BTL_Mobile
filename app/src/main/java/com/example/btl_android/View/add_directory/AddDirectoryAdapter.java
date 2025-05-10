@@ -12,9 +12,9 @@ import com.example.btl_android.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddDirectoryAdapter extends RecyclerView.Adapter<AddDirectoryAdapter.ViewHolder>{
-
-    private final List<Integer> listDirectory = new ArrayList<>(List.of(R.drawable.icon_eat_and_drink,
+public class AddDirectoryAdapter extends RecyclerView.Adapter<AddDirectoryAdapter.ViewHolder> {
+    private final List<Integer> listDirectory = new ArrayList<>(List.of(
+            R.drawable.icon_eat_and_drink,
             R.drawable.icon_daily_spending,
             R.drawable.icon_clothes,
             R.drawable.icon_cosmetics,
@@ -45,7 +45,7 @@ public class AddDirectoryAdapter extends RecyclerView.Adapter<AddDirectoryAdapte
             R.drawable.icon_camera,
             R.drawable.icon_flowers));
 
-    private int item = 0;
+    private int selectedIconPosition = 0;  // Chỉ mục icon đã chọn
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final ItemAddDirectoryBinding binding;
@@ -65,17 +65,19 @@ public class AddDirectoryAdapter extends RecyclerView.Adapter<AddDirectoryAdapte
     @Override
     public void onBindViewHolder(AddDirectoryAdapter.ViewHolder holder, int position) {
         holder.binding.imvDirectory.setImageResource(listDirectory.get(position));
+
         holder.binding.getRoot().setOnClickListener(view -> {
-            int i = position;
-            item = i;
+            selectedIconPosition = holder.getAdapterPosition();
             notifyDataSetChanged();
         });
-        if (position == item) {
+
+        if (position == selectedIconPosition) {
             holder.binding.getRoot().setBackgroundResource(R.drawable.border_btn_tienthu);
         } else {
             holder.binding.getRoot().setBackgroundResource(R.drawable.border_directory);
         }
     }
+
 
     @Override
     public int getItemCount() {
@@ -83,7 +85,16 @@ public class AddDirectoryAdapter extends RecyclerView.Adapter<AddDirectoryAdapte
     }
 
     public int getIcon() {
-        return listDirectory.get(item);
+        return listDirectory.get(selectedIconPosition);
     }
 
+    public void setSelectedIcon(int position) {
+        selectedIconPosition = position;
+        notifyDataSetChanged();
+    }
+
+    public int getIcon(int position) {
+        return listDirectory.get(position);
+    }
 }
+

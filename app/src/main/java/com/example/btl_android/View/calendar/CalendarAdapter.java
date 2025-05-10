@@ -88,17 +88,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             spendingViewHolder.binding.tvNameDiretory.setText(spending.getTenDanhMuc());
             spendingViewHolder.binding.imvAvtSpending.setImageBitmap(decodeBase64ToBitmap(spending.getIcon()));
-//            spendingViewHolder.binding.getRoot().setOnLongClickListener(new View.OnLongClickListener() {
-//                @Override
-//                public boolean onLongClick(View v) {
-//                    showPopupMenu(spendingViewHolder.itemView);
-//                    index = i - 1;
-//                    return true;
-//                }
-//            });
 
             spendingViewHolder.binding.imvDelete.setOnClickListener(view -> {
-                clickListener.onClickDelete(spending, spendingIndex);
+                clickListener.onClickDelete(spending, position);
             });
 
             spendingViewHolder.binding.getRoot().setOnClickListener(view -> {
@@ -127,24 +119,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         listSpending.addAll(list);
         notifyDataSetChanged();
     }
-
-//    private void showPopupMenu(View view) {
-//        PopupMenu popupMenu = new PopupMenu(context, view);
-//        popupMenu.getMenuInflater().inflate(R.menu.menu_giaodich, popupMenu.getMenu());
-//        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                switch (item.getItemId()) {
-//                    case R.id.delete:
-//                        clickListener.onClickDelete();
-//                        return true;
-//                    default:
-//                        return false;
-//                }
-//            }
-//        });
-//        popupMenu.show();
-//    }
 
     public int getIndex() {
         return index;

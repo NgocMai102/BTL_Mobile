@@ -2,7 +2,6 @@ package com.example.btl_android.View.home;
 
 import static com.example.btl_android.Helper.ViewExtention.decodeBase64ToBitmap;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView;

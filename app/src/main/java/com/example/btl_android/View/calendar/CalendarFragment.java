@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
+import android.widget.Toast;
 
 import com.example.btl_android.Model.SpendingInCalendar;
 import com.example.btl_android.R;
@@ -57,7 +58,7 @@ public class CalendarFragment extends Fragment {
         adapter = new CalendarAdapter(new CalendarAdapter.ClickListener() {
             @Override
             public void onClickDelete(SpendingInCalendar spending, int position) {
-                clickDelete();
+                clickDelete(spending, position);
             }
             @Override
             public void onClickSpending(SpendingInCalendar spendingInCalendar) {
@@ -152,22 +153,19 @@ public class CalendarFragment extends Fragment {
         startActivity(intent);
     }
 
-    private void clickDelete() {
-        showYesNoDialog();
+    private void clickDelete(SpendingInCalendar spending, int position) {
+        showYesNoDialog(spending, position);
     }
 
-    private void showYesNoDialog() {
+    private void showYesNoDialog(SpendingInCalendar spending, int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Câu hỏi")
                 .setMessage("Bạn có chắc chắn muốn xóa mục? Thao tác này không thể hoàn tác lại.")
-                .setPositiveButton("Yes", (dialog, which) -> {
+                .setPositiveButton("Có", (dialog, which) -> {
                     try {
-                        viewModel.delete(requireContext(), listSpending.get(adapter.getIndex()));
-                        getData(
-                                calendar.get(Calendar.YEAR),
-                                calendar.get(Calendar.MONTH) + 1,
-                                calendar.get(Calendar.DAY_OF_MONTH)
-                        );
+                        viewModel.delete(requireContext(), spending);
+                        reloadData();
+                        Toast.makeText(getContext(), "Đã xóa mục chi tiêu", Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         Log.e(TAG, "showYesNoDialog: " + e.getMessage());
 
@@ -175,11 +173,20 @@ public class CalendarFragment extends Fragment {
 
                     dialog.dismiss();
                 })
-                .setNegativeButton("No", (dialog, which) -> {
+                .setNegativeButton("Không", (dialog, which) -> {
                     dialog.dismiss();
                 });
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void reloadData() {
+        getData(
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH) + 1,
+                calendar.get(Calendar.DAY_OF_MONTH)
+        );
+        getTotal(calendar.get(Calendar.MONTH) + 1);
     }
 }
