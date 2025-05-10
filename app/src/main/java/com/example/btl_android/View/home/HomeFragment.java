@@ -165,29 +165,27 @@ public class HomeFragment extends Fragment {
     }
 
     private void onClickTienThu() {
-        // Update appearance for btn_tien_thu (active)
+        getDanhMucThu();
+
         binding.btnTienThu.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.rounded_blue));
         binding.btnTienThu.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
 
-        // Reset appearance for btn_tien_chi (inactive)
         binding.btnTienChi.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.rounded_gray));
         binding.btnTienChi.setTextColor(ContextCompat.getColor(requireContext(), R.color.bluenav));
 
-        // Update other UI if needed
         binding.tvSpendingMoneyOrRevenue.setText(Constants.TIEN_THU);
         binding.btnAccept.setText(Constants.BTN_TIEN_THU);
     }
 
     private void onClickTienChi() {
-        // Update appearance for btn_tien_chi (active)
+        getDanhMucChi();
+
         binding.btnTienChi.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.rounded_blue));
         binding.btnTienChi.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
 
-        // Reset appearance for btn_tien_thu (inactive)
         binding.btnTienThu.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.rounded_gray));
         binding.btnTienThu.setTextColor(ContextCompat.getColor(requireContext(), R.color.bluenav));
 
-        // Update other UI if needed
         binding.tvSpendingMoneyOrRevenue.setText(Constants.TIEN_CHI);
         binding.btnAccept.setText(Constants.BTN_TIEN_CHI);
     }
@@ -240,8 +238,6 @@ public class HomeFragment extends Fragment {
             Log.e("updateSpending", "Invalid number format", e);
         }
     }
-
-
 }
 
 
