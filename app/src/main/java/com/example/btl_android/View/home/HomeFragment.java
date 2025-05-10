@@ -179,7 +179,7 @@ public class HomeFragment extends Fragment {
         binding.btnTienThu.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
 
         binding.btnTienChi.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.rounded_gray));
-        binding.btnTienChi.setTextColor(ContextCompat.getColor(requireContext(), R.color.bluenav));
+        binding.btnTienChi.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary));
 
         binding.tvSpendingMoneyOrRevenue.setText(Constants.TIEN_THU);
         binding.btnAccept.setText(Constants.BTN_TIEN_THU);
@@ -192,7 +192,7 @@ public class HomeFragment extends Fragment {
         binding.btnTienChi.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
 
         binding.btnTienThu.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.rounded_gray));
-        binding.btnTienThu.setTextColor(ContextCompat.getColor(requireContext(), R.color.bluenav));
+        binding.btnTienThu.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary));
 
         binding.tvSpendingMoneyOrRevenue.setText(Constants.TIEN_CHI);
         binding.btnAccept.setText(Constants.BTN_TIEN_CHI);
