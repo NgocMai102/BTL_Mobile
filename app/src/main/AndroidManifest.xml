@@ -21,6 +21,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".View.edit_directory.EditDirectoryActivity" />
+        <activity android:name=".View.add_directory.AddDirectoryActivity" />
     </application>
 
 </manifest>

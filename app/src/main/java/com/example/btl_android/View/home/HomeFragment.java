@@ -22,6 +22,7 @@ import com.example.btl_android.Helper.Constants;
 import com.example.btl_android.Model.DanhMuc;
 import com.example.btl_android.Model.GiaoDich;
 import com.example.btl_android.R;
+import com.example.btl_android.View.edit_directory.EditDirectoryActivity;
 import com.example.btl_android.databinding.FragmentHomeBinding;
 import java.util.Calendar;
 import java.util.List;
@@ -43,7 +44,14 @@ public class HomeFragment extends Fragment {
         viewModel._getDanhMucChi(requireContext());
         calendar = Calendar.getInstance();
         trangThai = true;
-        adapter = new DirectoryAdapter(null);
+        adapter = new DirectoryAdapter(
+                new DirectoryAdapter.ClickListener() {
+                    @Override
+                    public void onClickEditDirectory() {
+                        startActivity(new Intent(requireContext(), EditDirectoryActivity.class));
+                    }
+                }
+        );
         getDanhMucChi();
     }
 
