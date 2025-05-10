@@ -114,7 +114,7 @@
                         android:id="@+id/imv_increase_day"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/icon_comeback1" />
+                        android:src="@drawable/icon_comeback2" />
 
                 </LinearLayout>
             </LinearLayout>

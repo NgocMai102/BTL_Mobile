@@ -19,8 +19,10 @@ import com.example.btl_android.R;
 import com.example.btl_android.View.home.HomeViewModel;
 import com.example.btl_android.databinding.ActivityEditSpendingBinding;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class EditSpendingActivity extends AppCompatActivity {
     private ActivityEditSpendingBinding binding;
@@ -93,22 +95,28 @@ public class EditSpendingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 calendar.add(Calendar.DAY_OF_MONTH, -1);
-                String selectedDate = calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR); // Month is zero-based
-                binding.tvDay.setText(selectedDate + "");
+                String selectedDate = String.format("%02d/%02d/%04d",
+                        calendar.get(Calendar.DAY_OF_MONTH),
+                        calendar.get(Calendar.MONTH) + 1,
+                        calendar.get(Calendar.YEAR));
+                binding.tvDay.setText(selectedDate);
             }
         });
+
         binding.imvIncreaseDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
-                String selectedDate = calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR); // Month is zero-based
-                binding.tvDay.setText(selectedDate + "");
+                String selectedDate = String.format("%02d/%02d/%04d",
+                        calendar.get(Calendar.DAY_OF_MONTH),
+                        calendar.get(Calendar.MONTH) + 1,
+                        calendar.get(Calendar.YEAR));
+                binding.tvDay.setText(selectedDate);
             }
         });
         binding.imbtnBack.setOnClickListener(view -> {
             finish();
         });
-
     }
 
     private void onClickday() {
@@ -188,10 +196,15 @@ public class EditSpendingActivity extends AppCompatActivity {
                 @Override
                 public void onChanged(GiaoDich gd) {
                     giaoDich = gd;
-                    binding.tvDay.setText(gd.getNgayGiaoDich() + "/" + gd.getThangGiaoDich() + "/" +
-                            gd.getNamGiaoDich());
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                    Calendar calendar = Calendar.getInstance();
+                    String formattedDate = sdf.format(calendar.getTime());
+                    binding.tvDay.setText(formattedDate);
+
                     binding.edtNote.getEditText().setText(gd.getGhiChu());
                     binding.edtSpendingMoney.getEditText().setText(gd.getTien().toString());
+
                     calendar.set(gd.getNamGiaoDich(), gd.getThangGiaoDich() - 1, gd.getNgayGiaoDich());
 
                     if (gd.getThuChi())
@@ -199,7 +212,6 @@ public class EditSpendingActivity extends AppCompatActivity {
                     else
                         onClickTienThu();
 
-                    // Chờ danh sách danh mục được tải xong rồi mới set chọn đúng danh mục
                     long idDanhMuc = gd.getIdDanhMuc();
                     viewModel.danhMucChi().observe(EditSpendingActivity.this, new Observer<List<DanhMuc>>() {
                         @Override

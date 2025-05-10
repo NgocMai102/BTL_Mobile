@@ -65,7 +65,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadView() {
-        binding.tvDay.setText(calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR));
+        String formattedDate = String.format("%02d/%02d/%04d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
+        binding.tvDay.setText(formattedDate);
         binding.recyclerview.setAdapter(adapter);
         binding.btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,7 +102,6 @@ public class HomeFragment extends Fragment {
                         binding.SpendInput.setText(formatted);
                         binding.SpendInput.setSelection(formatted.length());
                     } catch (NumberFormatException e) {
-                        // If not a valid number (empty or too large), just reset
                         binding.SpendInput.setText("");
                     }
 
@@ -134,19 +134,25 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 calendar.add(Calendar.DAY_OF_MONTH, -1);
-                String selectedDate = calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR); // Month is zero-based
-                binding.tvDay.setText(selectedDate + "");
+                String selectedDate = String.format("%02d/%02d/%04d",
+                        calendar.get(Calendar.DAY_OF_MONTH),
+                        calendar.get(Calendar.MONTH) + 1,
+                        calendar.get(Calendar.YEAR));
+                binding.tvDay.setText(selectedDate);
             }
         });
+
         binding.imvIncreaseDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
-                String selectedDate = calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR); // Month is zero-based
-                binding.tvDay.setText(selectedDate + "");
+                String selectedDate = String.format("%02d/%02d/%04d",
+                        calendar.get(Calendar.DAY_OF_MONTH),
+                        calendar.get(Calendar.MONTH) + 1,
+                        calendar.get(Calendar.YEAR));
+                binding.tvDay.setText(selectedDate);
             }
         });
-
     }
 
     @Override
