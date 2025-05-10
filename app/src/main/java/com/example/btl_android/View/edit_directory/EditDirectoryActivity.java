@@ -128,12 +128,11 @@ public class EditDirectoryActivity extends AppCompatActivity {
     }
 
     private void edit(DanhMuc danhMuc) {
-        Log.d("EditDirectoryActivity", "Intent đang được tạo");
         Intent intent = new Intent(this, AddDirectoryActivity.class);
         intent.putExtra("name", adapter.getDanhMuc().getTenDanhMuc());
         intent.putExtra("id", adapter.getDanhMuc().getId());
+        intent.putExtra("mode", "edit");
         startActivity(intent);
-        Log.d("EditDirectoryActivity", "Intent đã được gửi");
     }
 
     private void showYesNoDialog(DanhMuc danhMuc, int position) {
