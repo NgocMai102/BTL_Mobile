@@ -19,8 +19,10 @@ import com.example.btl_android.R;
 import com.example.btl_android.View.home.HomeViewModel;
 import com.example.btl_android.databinding.ActivityEditSpendingBinding;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class EditSpendingActivity extends AppCompatActivity {
     private ActivityEditSpendingBinding binding;
@@ -93,22 +95,28 @@ public class EditSpendingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 calendar.add(Calendar.DAY_OF_MONTH, -1);
-                String selectedDate = calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR); // Month is zero-based
-                binding.tvDay.setText(selectedDate + "");
+                String selectedDate = String.format("%02d/%02d/%04d",
+                        calendar.get(Calendar.DAY_OF_MONTH),
+                        calendar.get(Calendar.MONTH) + 1,
+                        calendar.get(Calendar.YEAR));
+                binding.tvDay.setText(selectedDate);
             }
         });
+
         binding.imvIncreaseDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
-                String selectedDate = calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR); // Month is zero-based
-                binding.tvDay.setText(selectedDate + "");
+                String selectedDate = String.format("%02d/%02d/%04d",
+                        calendar.get(Calendar.DAY_OF_MONTH),
+                        calendar.get(Calendar.MONTH) + 1,
+                        calendar.get(Calendar.YEAR));
+                binding.tvDay.setText(selectedDate);
             }
         });
         binding.imbtnBack.setOnClickListener(view -> {
             finish();
         });
-
     }
 
     private void onClickday() {
@@ -133,7 +141,7 @@ public class EditSpendingActivity extends AppCompatActivity {
 
     private void onClickTienThu() {
         getDanhMucThu();
-        binding.btnTienThu.setBackgroundResource(R.color.primary);
+        binding.btnTienThu.setBackgroundResource(R.drawable.rounded_blue);
         binding.btnTienThu.setTextColor(ContextCompat.getColor(EditSpendingActivity.this, R.color.white));
         binding.btnTienChi.setBackgroundResource(R.drawable.border_btn_tienthu);
         binding.btnTienChi.setTextColor(ContextCompat.getColor(EditSpendingActivity.this, R.color.primary));
@@ -142,7 +150,7 @@ public class EditSpendingActivity extends AppCompatActivity {
 
     private void onClickTienChi() {
         getDanhMucChi();
-        binding.btnTienChi.setBackgroundResource(R.color.primary);
+        binding.btnTienChi.setBackgroundResource(R.drawable.rounded_blue);
         binding.btnTienChi.setTextColor(ContextCompat.getColor(EditSpendingActivity.this, R.color.white));
         binding.btnTienThu.setBackgroundResource(R.drawable.border_btn_tienthu);
         binding.btnTienThu.setTextColor(ContextCompat.getColor(EditSpendingActivity.this, R.color.primary));
@@ -188,16 +196,38 @@ public class EditSpendingActivity extends AppCompatActivity {
                 @Override
                 public void onChanged(GiaoDich gd) {
                     giaoDich = gd;
-                    binding.tvDay.setText(gd.getNgayGiaoDich() + "/" + gd.getThangGiaoDich() + "/" +
-                            gd.getNamGiaoDich());
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                    Calendar calendar = Calendar.getInstance();
+                    String formattedDate = sdf.format(calendar.getTime());
+                    binding.tvDay.setText(formattedDate);
+
                     binding.edtNote.getEditText().setText(gd.getGhiChu());
                     binding.edtSpendingMoney.getEditText().setText(gd.getTien().toString());
-                    calendar.set(gd.getNamGiaoDich(), gd.getThangGiaoDich() - 1, gd.
-                            getNgayGiaoDich());
+
+                    calendar.set(gd.getNamGiaoDich(), gd.getThangGiaoDich() - 1, gd.getNgayGiaoDich());
+
                     if (gd.getThuChi())
                         onClickTienChi();
                     else
                         onClickTienThu();
+
+                    long idDanhMuc = gd.getIdDanhMuc();
+                    viewModel.danhMucChi().observe(EditSpendingActivity.this, new Observer<List<DanhMuc>>() {
+                        @Override
+                        public void onChanged(List<DanhMuc> danhMucs) {
+                            adapter.setAdapter(danhMucs);
+                            adapter.setSelectedById(idDanhMuc);
+                        }
+                    });
+
+                    viewModel.danhMucThu().observe(EditSpendingActivity.this, new Observer<List<DanhMuc>>() {
+                        @Override
+                        public void onChanged(List<DanhMuc> danhMucs) {
+                            adapter.setAdapter(danhMucs);
+                            adapter.setSelectedById(idDanhMuc);
+                        }
+                    });
                 }
             });
         }

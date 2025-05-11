@@ -65,7 +65,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadView() {
-        binding.tvDay.setText(calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR));
+        String formattedDate = String.format("%02d/%02d/%04d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
+        binding.tvDay.setText(formattedDate);
         binding.recyclerview.setAdapter(adapter);
         binding.btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,7 +102,6 @@ public class HomeFragment extends Fragment {
                         binding.SpendInput.setText(formatted);
                         binding.SpendInput.setSelection(formatted.length());
                     } catch (NumberFormatException e) {
-                        // If not a valid number (empty or too large), just reset
                         binding.SpendInput.setText("");
                     }
 
@@ -134,24 +134,36 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 calendar.add(Calendar.DAY_OF_MONTH, -1);
-                String selectedDate = calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR); // Month is zero-based
-                binding.tvDay.setText(selectedDate + "");
+                String selectedDate = String.format("%02d/%02d/%04d",
+                        calendar.get(Calendar.DAY_OF_MONTH),
+                        calendar.get(Calendar.MONTH) + 1,
+                        calendar.get(Calendar.YEAR));
+                binding.tvDay.setText(selectedDate);
             }
         });
+
         binding.imvIncreaseDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
-                String selectedDate = calendar.get(Calendar.DAY_OF_MONTH) + "/" + (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR); // Month is zero-based
-                binding.tvDay.setText(selectedDate + "");
+                String selectedDate = String.format("%02d/%02d/%04d",
+                        calendar.get(Calendar.DAY_OF_MONTH),
+                        calendar.get(Calendar.MONTH) + 1,
+                        calendar.get(Calendar.YEAR));
+                binding.tvDay.setText(selectedDate);
             }
         });
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        viewModel._getDanhMucThu(requireContext());
+        viewModel._getDanhMucChi(requireContext());
+        calendar = Calendar.getInstance();
+        trangThai = true;
     }
 
     private void onClickday() {
@@ -179,7 +191,7 @@ public class HomeFragment extends Fragment {
         binding.btnTienThu.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
 
         binding.btnTienChi.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.rounded_gray));
-        binding.btnTienChi.setTextColor(ContextCompat.getColor(requireContext(), R.color.bluenav));
+        binding.btnTienChi.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary));
 
         binding.tvSpendingMoneyOrRevenue.setText(Constants.TIEN_THU);
         binding.btnAccept.setText(Constants.BTN_TIEN_THU);
@@ -192,7 +204,7 @@ public class HomeFragment extends Fragment {
         binding.btnTienChi.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
 
         binding.btnTienThu.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.rounded_gray));
-        binding.btnTienThu.setTextColor(ContextCompat.getColor(requireContext(), R.color.bluenav));
+        binding.btnTienThu.setTextColor(ContextCompat.getColor(requireContext(), R.color.primary));
 
         binding.tvSpendingMoneyOrRevenue.setText(Constants.TIEN_CHI);
         binding.btnAccept.setText(Constants.BTN_TIEN_CHI);

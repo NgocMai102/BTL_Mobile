@@ -19,6 +19,7 @@ public class AddDirectoryActivity extends AppCompatActivity {
     private ActivityAddDirectoryBinding binding;
     private AddDirectoryAdapter adapter;
     private int id;
+    private String icon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +32,8 @@ public class AddDirectoryActivity extends AppCompatActivity {
         String mode = getIntent().getStringExtra("mode");
         if ("edit".equals(mode)) {
             binding.txtTitle.setText("Chỉnh sửa danh mục");
+            icon = getIntent().getStringExtra("icon");
+            setIconFromIntent(icon);
         } else {
             binding.txtTitle.setText("Thêm danh mục");
         }
@@ -42,6 +45,20 @@ public class AddDirectoryActivity extends AppCompatActivity {
             onClickSave();
         });
         binding.recyclerview.setAdapter(adapter);
+    }
+
+    private void setIconFromIntent(String iconBase64) {
+        int iconIndex = convertBase64ToIconIndex(iconBase64);
+        adapter.setSelectedIcon(iconIndex);
+    }
+
+    private int convertBase64ToIconIndex(String base64) {
+        for (int i = 0; i < adapter.getItemCount(); i++) {
+            if (base64.equals(convertDrawableToBase64(getApplicationContext(), adapter.getIcon(i)))) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private void onClickSave() {

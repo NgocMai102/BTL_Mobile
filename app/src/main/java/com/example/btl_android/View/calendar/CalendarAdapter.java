@@ -24,6 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import java.text.DecimalFormat;
+
+
 public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String TAG = "CalendarAdapter";
     private final int typeTime = 0;
@@ -37,6 +40,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private static final int VIEW_TYPE_HEADER = 0;
     private static final int VIEW_TYPE_SPENDING = 1;
+
+    DecimalFormat formatter = new DecimalFormat("#,###");
 
     public LiveData<DanhMuc> danhMucThu() {
         return _danhMucThu;
@@ -70,9 +75,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        int i = position;
         if (getItemViewType(position) == VIEW_TYPE_HEADER) {
             TimeViewHolder timeViewHolder = (TimeViewHolder) holder;
             timeViewHolder.binding.getRoot().setText(time + "");
@@ -84,10 +89,8 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             spendingViewHolder.binding.tvNameDiretory.setText(spending.getTenDanhMuc());
             spendingViewHolder.binding.imvAvtSpending.setImageBitmap(decodeBase64ToBitmap(spending.getIcon()));
 
-            spendingViewHolder.binding.getRoot().setOnLongClickListener(v -> {
-                showPopupMenu(spendingViewHolder.itemView);
-                index = spendingIndex;
-                return true;
+            spendingViewHolder.binding.imvDelete.setOnClickListener(view -> {
+                clickListener.onClickDelete(spending, position);
             });
 
             spendingViewHolder.binding.getRoot().setOnClickListener(view -> {
@@ -95,9 +98,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             });
 
             if (spending.getThuChi()) {
-                spendingViewHolder.binding.tvSpendingMoney.setText("-" + spending.getTien());
+                spendingViewHolder.binding.tvSpendingMoney.setText("-" + formatter.format(spending.getTien()) + " đ");
             } else {
-                spendingViewHolder.binding.tvSpendingMoney.setText("+" + spending.getTien());
+                spendingViewHolder.binding.tvSpendingMoney.setText("+" + formatter.format(spending.getTien()) + " đ");
             }
 
             spendingViewHolder.binding.tvNote.setText(spending.getGhiChu());
@@ -121,22 +124,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         return index;
     }
 
-    private void showPopupMenu(View view) {
-        PopupMenu popupMenu = new PopupMenu(context, view);
-        popupMenu.getMenuInflater().inflate(R.menu.menu_giaodich, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if (item.getItemId() == R.id.btn_delete) {
-                    clickListener.onClickDelete();
-                    return true;
-                }
-                return false;
-            }
-        });
-        popupMenu.show();
-    }
-
     public static class TimeViewHolder extends RecyclerView.ViewHolder {
         private final ItemTimeBinding binding;
 
@@ -156,8 +143,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     interface ClickListener {
-        void onClickDelete();
-
+        void onClickDelete(SpendingInCalendar spendingInCalendar, int position);
         void onClickSpending(SpendingInCalendar spendingInCalendar);
     }
 }

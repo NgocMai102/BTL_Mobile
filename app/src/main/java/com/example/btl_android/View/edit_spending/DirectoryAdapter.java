@@ -65,6 +65,15 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
         return listDirectory.get(index);
     }
 
+    public void setSelectedById(long idDanhMuc) {
+        for (int i = 0; i < listDirectory.size(); i++) {
+            if (listDirectory.get(i).getId() == idDanhMuc) {
+                index = i;
+                break;
+            }
+        }
+        notifyDataSetChanged();
+    }
 }
 
 
