@@ -9,6 +9,7 @@ import androidx.room.Update;
 
 import com.example.btl_android.Model.DanhMuc;
 import com.example.btl_android.Model.GiaoDich;
+import com.example.btl_android.Model.SpendingInCalendar;
 import com.example.btl_android.Model.HoaDon;
 import com.example.btl_android.Model.NguoiDung;
 import com.example.btl_android.Model.SpendingInChart;
@@ -61,6 +62,8 @@ public interface Queries {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public Long themDanhMuc(DanhMuc danhMuc);
 
+    @Query("select  GiaoDich.Id, DanhMuc.Icon,DanhMuc.TenDanhMuc,GiaoDich.Tien,GiaoDich.GhiChu,GiaoDich.ThuChi from GiaoDich inner join DanhMuc on GiaoDich.IdDanhMuc = DanhMuc.Id where GiaoDich.NgayGiaoDich = :ngay and GiaoDich.ThangGiaoDich =:thang and GiaoDich.NamGiaoDich = :nam ")
+    public List<SpendingInCalendar> timKiemDanhMuc(int ngay, int thang, int nam);
 
     @Query("select * from DanhMuc where ThuChi = 1")
     public List<DanhMuc> timKiemDanhMucChi();
