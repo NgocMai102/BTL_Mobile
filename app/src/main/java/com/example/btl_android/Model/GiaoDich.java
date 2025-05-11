@@ -3,16 +3,18 @@ package com.example.btl_android.Model;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-import com.example.btl_android.Model.DanhMuc;
-
-@Entity(tableName = "GiaoDich", foreignKeys = @ForeignKey(
+@Entity(
+        tableName = "GiaoDich", foreignKeys = @ForeignKey(
         entity = DanhMuc.class,
         parentColumns = "Id",
         childColumns = "IdDanhMuc",
         onDelete = ForeignKey.NO_ACTION
-))
+        ),
+        indices = {@Index(value = {"IdDanhMuc"})})
 public class GiaoDich {
     @PrimaryKey(autoGenerate = true)
     private int Id;
@@ -35,6 +37,7 @@ public class GiaoDich {
     public GiaoDich() {
     }
 
+    @Ignore
     public GiaoDich(int Id, int ngayGiaoDich, int thangGiaoDich, int namGiaoDich, Long tien, String ghiChu, Boolean thuChi, int idDanhMuc) {
         this.Id = Id;
         this.ngayGiaoDich = ngayGiaoDich;
@@ -45,6 +48,8 @@ public class GiaoDich {
         this.thuChi = thuChi;
         this.idDanhMuc = idDanhMuc;
     }
+
+    @Ignore
     public GiaoDich( int ngayGiaoDich, int thangGiaoDich, int namGiaoDich, Long tien, String ghiChu, Boolean thuChi) {
         this.Id = Id;
         this.ngayGiaoDich = ngayGiaoDich;

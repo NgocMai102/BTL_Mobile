@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
 
 import kotlinx.coroutines.GlobalScope;
 
-@Database(entities = {DanhMuc.class, GiaoDich.class, HoaDon.class, NguoiDung.class}, version = 1, exportSchema = false)
+@Database(entities = {DanhMuc.class, GiaoDich.class, HoaDon.class, NguoiDung.class}, version = 2, exportSchema = false)
 public abstract class DataBaseManager extends RoomDatabase {
     public abstract Queries getItemDAO();
 
@@ -43,12 +43,16 @@ public abstract class DataBaseManager extends RoomDatabase {
         return Room.databaseBuilder(context, DataBaseManager.class, DATABASE_NAME)
                 .fallbackToDestructiveMigration()
                 .addCallback(new RoomDatabase.Callback() {
-
                     @Override
                     public void onCreate(@NonNull SupportSQLiteDatabase db) {
                         super.onCreate(db);
-                        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-                            prepopulateDatabase(instance.getItemDAO(), context);
+                        // Build a temporary instance JUST for prepopulation
+                        DataBaseManager tempInstance = Room.databaseBuilder(context, DataBaseManager.class, DATABASE_NAME)
+                                .allowMainThreadQueries() // Needed for simplicity
+                                .build();
+
+                        CompletableFuture.runAsync(() -> {
+                            prepopulateDatabase(tempInstance.getItemDAO(), context);
                         });
                     }
                 })
