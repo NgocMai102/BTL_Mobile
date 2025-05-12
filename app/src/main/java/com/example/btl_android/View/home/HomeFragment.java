@@ -48,7 +48,9 @@ public class HomeFragment extends Fragment {
                 new DirectoryAdapter.ClickListener() {
                     @Override
                     public void onClickEditDirectory() {
-                        startActivity(new Intent(requireContext(), EditDirectoryActivity.class));
+                        Intent intent = new Intent(requireContext(), EditDirectoryActivity.class);
+                        intent.putExtra("trangThai", trangThai); // truyền trạng thái
+                        startActivity(intent);
                     }
                 }
         );
@@ -159,11 +161,11 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
-        viewModel._getDanhMucThu(requireContext());
-        viewModel._getDanhMucChi(requireContext());
-        calendar = Calendar.getInstance();
-        trangThai = true;
+        if (trangThai) {
+            onClickTienChi();
+        } else {
+            onClickTienThu();
+        }
     }
 
     private void onClickday() {
