@@ -12,7 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.anychart.APIlib;
 import com.anychart.AnyChart;
+import com.anychart.AnyChartView;
 import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Pie;
@@ -32,9 +34,10 @@ public class ChartFragment extends Fragment {
     private FragmentChartBinding binding;
     private ChartAdapter adapter;
     private Calendar calendar;
-    private int revenue;
-    private int spending;
+    private long revenue;
+    private long spending;
     private Pie pie;
+    private AnyChartView anyChartView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,12 +59,68 @@ public class ChartFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize chart after view is created
-        pie = AnyChart.pie();
-        binding.anyChart.setChart(pie);
-
+        // Ensure AnyChartView is properly initialized
+        setupAnyChartView();
         loadView();
         check();
+    }
+
+    private void setupAnyChartView() {
+        try {
+            anyChartView = binding.anyChart;
+
+            // Ensure the view is not null and is visible
+            if (anyChartView != null) {
+                // Initialize AnyChart library
+                APIlib.getInstance().setActiveAnyChartView(anyChartView);
+
+                // Create pie chart
+                pie = AnyChart.pie();
+                pie.title("Biểu đồ chi tiêu");
+                pie.labels().position("outside");
+                pie.legend().position("bottom");
+
+                // Set the chart to the view
+                anyChartView.setChart(pie);
+
+                // Ensure visibility
+                anyChartView.setVisibility(View.VISIBLE);
+            } else {
+                Log.e(TAG, "AnyChartView is null");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error setting up AnyChartView", e);
+        }
+    }
+
+    private void initializeChart() {
+        try {
+            // Ensure the chart view has the correct visibility and dimensions
+            if (anyChartView != null) {
+                // Log the view's dimensions
+                Log.d(TAG, "AnyChartView Width: " + anyChartView.getWidth());
+                Log.d(TAG, "AnyChartView Height: " + anyChartView.getHeight());
+
+                // Ensure the view is visible and has dimensions
+                anyChartView.setVisibility(View.VISIBLE);
+
+                pie = AnyChart.pie();
+                pie.title("Biểu đồ chi tiêu");
+                pie.labels().position("outside");
+                pie.legend().position("bottom");
+
+                // Explicitly set chart
+                anyChartView.setChart(pie);
+
+                // Force layout update
+                anyChartView.requestLayout();
+                anyChartView.invalidate();
+            } else {
+                Log.e(TAG, "AnyChartView is null - cannot initialize chart");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Chart initialization error", e);
+        }
     }
 
     private void loadView() {
@@ -75,8 +134,10 @@ public class ChartFragment extends Fragment {
             public void onTabSelected(TabLayout.Tab tab) {
                 check();
             }
-            @Override public void onTabUnselected(TabLayout.Tab tab) {}
-            @Override public void onTabReselected(TabLayout.Tab tab) {
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
                 check();
             }
         });
@@ -95,92 +156,160 @@ public class ChartFragment extends Fragment {
     }
 
     private void spendingAdapter() {
+        Log.d(TAG, "Fetching spending data");
         viewModel.get_SpendingInChartChi(requireContext(), calendar.get(Calendar.MONTH) + 1);
         viewModel.SpendingInChartChi().observe(getViewLifecycleOwner(), spendingInCharts -> {
-            if (binding.anyChart == null || pie == null) return;
+            Log.d(TAG, "Spending data received: " + spendingInCharts.size() + " items");
 
             spending = 0;
             List<DataEntry> dataEntries = new ArrayList<>();
             List<SpendingInChart> spendingInChart = new ArrayList<>();
 
             if (spendingInCharts.isEmpty()) {
-                binding.anyChart.setVisibility(View.GONE);
-                binding.tvNothing.setVisibility(View.VISIBLE);
-            } else {
-                Map<String, List<SpendingInChart>> listMap = spendingInCharts.stream()
-                        .collect(Collectors.groupingBy(SpendingInChart::getTenDanhMuc));
-                listMap.forEach((_tenDanhMuc, list) -> {
-                    SpendingInChart s = new SpendingInChart(
-                            list.stream().mapToLong(SpendingInChart::getTien).sum(),
-                            _tenDanhMuc,
-                            list.get(0).getIcon()
-                    );
-                    spendingInChart.add(s);
-                    dataEntries.add(new ValueDataEntry(s.getTenDanhMuc(), s.getTien()));
-                    spending -= s.getTien();
-                });
-
-                try {
-                    pie.data(dataEntries);
-                    binding.anyChart.setVisibility(View.VISIBLE);
-                    binding.tvNothing.setVisibility(View.GONE);
-                } catch (Exception e) {
-                    Log.e(TAG, "Error updating chart data", e);
-                }
+                Log.d(TAG, "No spending data available");
+                resetChartAndAdapter();
+                return;
             }
-            adapter.setAdapter(spendingInChart);
-            updateTotal();
+
+            Map<String, List<SpendingInChart>> listMap = spendingInCharts.stream()
+                    .collect(Collectors.groupingBy(SpendingInChart::getTenDanhMuc));
+
+            listMap.forEach((_tenDanhMuc, list) -> {
+                long totalAmount = list.stream().mapToLong(SpendingInChart::getTien).sum();
+                SpendingInChart s = new SpendingInChart(
+                        totalAmount,
+                        _tenDanhMuc,
+                        list.get(0).getIcon()
+                );
+                spendingInChart.add(s);
+                dataEntries.add(new ValueDataEntry(s.getTenDanhMuc(), Math.abs(totalAmount)));
+                spending -= totalAmount;
+            });
+
+            updateChartAndAdapter(dataEntries, spendingInChart);
         });
     }
 
     private void revenueAdapter() {
+        Log.d(TAG, "Fetching revenue data");
         viewModel.get_SpendingInChartThu(requireContext(), calendar.get(Calendar.MONTH) + 1);
         viewModel.SpendingInChartThu().observe(getViewLifecycleOwner(), spendingInCharts -> {
-            if (binding.anyChart == null || pie == null) return;
+            Log.d(TAG, "Revenue data received: " + spendingInCharts.size() + " items");
 
             revenue = 0;
             List<DataEntry> dataEntries = new ArrayList<>();
             List<SpendingInChart> spendingInChart = new ArrayList<>();
 
             if (spendingInCharts.isEmpty()) {
-                binding.anyChart.setVisibility(View.GONE);
-                binding.tvNothing.setVisibility(View.VISIBLE);
-            } else {
-                Map<String, List<SpendingInChart>> listMap = spendingInCharts.stream()
-                        .collect(Collectors.groupingBy(SpendingInChart::getTenDanhMuc));
-                listMap.forEach((_tenDanhMuc, list) -> {
-                    SpendingInChart s = new SpendingInChart(
-                            list.stream().mapToLong(SpendingInChart::getTien).sum(),
-                            _tenDanhMuc,
-                            list.get(0).getIcon()
-                    );
-                    spendingInChart.add(s);
-                    dataEntries.add(new ValueDataEntry(s.getTenDanhMuc(), s.getTien()));
-                    revenue += s.getTien();
-                });
+                Log.d(TAG, "No revenue data available");
+                resetChartAndAdapter();
+                return;
+            }
 
-                try {
-                    pie.data(dataEntries);
-                    binding.anyChart.setVisibility(View.VISIBLE);
-                    binding.tvNothing.setVisibility(View.GONE);
-                } catch (Exception e) {
-                    Log.e(TAG, "Error updating chart data", e);
+            Map<String, List<SpendingInChart>> listMap = spendingInCharts.stream()
+                    .collect(Collectors.groupingBy(SpendingInChart::getTenDanhMuc));
+
+            listMap.forEach((_tenDanhMuc, list) -> {
+                long totalAmount = list.stream().mapToLong(SpendingInChart::getTien).sum();
+                SpendingInChart s = new SpendingInChart(
+                        totalAmount,
+                        _tenDanhMuc,
+                        list.get(0).getIcon()
+                );
+                spendingInChart.add(s);
+                dataEntries.add(new ValueDataEntry(s.getTenDanhMuc(), totalAmount));
+                revenue += totalAmount;
+            });
+
+            updateChartAndAdapter(dataEntries, spendingInChart);
+        });
+    }
+
+    private void updateChartAndAdapter(List<DataEntry> dataEntries, List<SpendingInChart> spendingInChart) {
+        requireActivity().runOnUiThread(() -> {
+            try {
+                // Defensive checks
+                if (anyChartView == null || pie == null) {
+                    Log.e(TAG, "Cannot update chart: AnyChartView or Pie is null");
+                    setupAnyChartView(); // Attempt to reinitialize
+                    return;
+                }
+
+                // Clear previous data
+                pie.data(dataEntries);
+
+                // Ensure the chart is visible
+                anyChartView.setVisibility(View.VISIBLE);
+
+                // Force chart update
+                anyChartView.invalidate();
+
+                // Update adapter
+                adapter.setAdapter(spendingInChart);
+
+                // Update totals
+                updateTotal();
+
+                Log.d(TAG, "Chart updated successfully with " + dataEntries.size() + " entries");
+            } catch (Exception e) {
+                Log.e(TAG, "Error updating chart", e);
+
+                // Attempt to recover
+                if (getContext() != null) {
+                    try {
+                        // Reinitialize AnyChart library
+                        APIlib.getInstance().setActiveAnyChartView(anyChartView);
+                    } catch (Exception recoveryEx) {
+                        Log.e(TAG, "Failed to recover AnyChart", recoveryEx);
+                    }
                 }
             }
-            adapter.setAdapter(spendingInChart);
-            updateTotal();
+        });
+    }
+
+    private void resetChartAndAdapter() {
+        requireActivity().runOnUiThread(() -> {
+            try {
+                Log.d(TAG, "Resetting chart and adapter");
+
+                if (pie != null) {
+                    pie.data(new ArrayList<>());
+                }
+
+                if (anyChartView != null) {
+                    anyChartView.setVisibility(View.GONE);
+                }
+
+                adapter.setAdapter(new ArrayList<>());
+
+                revenue = 0;
+                spending = 0;
+                updateTotal();
+
+                Log.d(TAG, "Chart and adapter reset complete");
+            } catch (Exception e) {
+                Log.e(TAG, "Error resetting chart and adapter", e);
+            }
         });
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (binding != null) {
-            check();
+
+        // Reinitialize chart if needed
+        if (anyChartView == null) {
+            setupAnyChartView();
         }
+
+        check();
     }
 
     private void check() {
+        if (binding == null) return;
+
+        Log.d(TAG, "Checking current tab: " + binding.tapLayout.getSelectedTabPosition());
+
         if (binding.tapLayout.getSelectedTabPosition() == 0) {
             spendingAdapter();
         } else {
@@ -190,9 +319,23 @@ public class ChartFragment extends Fragment {
 
     private void updateTotal() {
         if (binding != null) {
-            binding.tvSpending.setText(spending + " đ");
+            binding.tvSpending.setText(Math.abs(spending) + " đ");
             binding.tvRevenue.setText(revenue + " đ");
             binding.tvTotal.setText((spending + revenue) + " đ");
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        // Cleanup
+        if (anyChartView != null) {
+            anyChartView.clear();
+        }
+
+        binding = null;
+        anyChartView = null;
+        pie = null;
     }
 }
