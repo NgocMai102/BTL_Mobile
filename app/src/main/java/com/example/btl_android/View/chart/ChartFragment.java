@@ -62,7 +62,8 @@ public class ChartFragment extends Fragment {
         // Ensure AnyChartView is properly initialized
         setupAnyChartView();
         loadView();
-        check();
+        setupObservers();
+        fetchAllData();
     }
 
     private void setupAnyChartView() {
@@ -132,97 +133,149 @@ public class ChartFragment extends Fragment {
         binding.tapLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                check();
+                updateCurrentTabData();
             }
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {}
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                check();
+                updateCurrentTabData();
             }
         });
 
         binding.imvBackNonth.setOnClickListener(v -> {
             calendar.add(Calendar.MONTH, -1);
             binding.tvMonth.setText("Tháng " + (calendar.get(Calendar.MONTH) + 1));
-            check();
+            fetchAllData();
         });
 
         binding.imvIncreaseMonth.setOnClickListener(v -> {
             calendar.add(Calendar.MONTH, 1);
             binding.tvMonth.setText("Tháng " + (calendar.get(Calendar.MONTH) + 1));
-            check();
+            fetchAllData();
         });
     }
 
-    private void spendingAdapter() {
-        Log.d(TAG, "Fetching spending data");
-        viewModel.get_SpendingInChartChi(requireContext(), calendar.get(Calendar.MONTH) + 1);
+    // Set up observers for spending and revenue data
+    private void setupObservers() {
+        // Observer for spending data
         viewModel.SpendingInChartChi().observe(getViewLifecycleOwner(), spendingInCharts -> {
             Log.d(TAG, "Spending data received: " + spendingInCharts.size() + " items");
 
             spending = 0;
-            List<DataEntry> dataEntries = new ArrayList<>();
-            List<SpendingInChart> spendingInChart = new ArrayList<>();
+            if (!spendingInCharts.isEmpty()) {
+                Map<String, List<SpendingInChart>> listMap = spendingInCharts.stream()
+                        .collect(Collectors.groupingBy(SpendingInChart::getTenDanhMuc));
 
-            if (spendingInCharts.isEmpty()) {
-                Log.d(TAG, "No spending data available");
-                resetChartAndAdapter();
-                return;
+                listMap.forEach((_tenDanhMuc, list) -> {
+                    long totalAmount = list.stream().mapToLong(SpendingInChart::getTien).sum();
+                    spending -= totalAmount;
+                });
             }
 
-            Map<String, List<SpendingInChart>> listMap = spendingInCharts.stream()
-                    .collect(Collectors.groupingBy(SpendingInChart::getTenDanhMuc));
+            updateTotal();
 
-            listMap.forEach((_tenDanhMuc, list) -> {
-                long totalAmount = list.stream().mapToLong(SpendingInChart::getTien).sum();
-                SpendingInChart s = new SpendingInChart(
-                        totalAmount,
-                        _tenDanhMuc,
-                        list.get(0).getIcon()
-                );
-                spendingInChart.add(s);
-                dataEntries.add(new ValueDataEntry(s.getTenDanhMuc(), Math.abs(totalAmount)));
-                spending -= totalAmount;
-            });
-
-            updateChartAndAdapter(dataEntries, spendingInChart);
+            // Update chart if we're on the spending tab
+            if (binding.tapLayout.getSelectedTabPosition() == 0) {
+                updateSpendingChart(spendingInCharts);
+            }
         });
-    }
 
-    private void revenueAdapter() {
-        Log.d(TAG, "Fetching revenue data");
-        viewModel.get_SpendingInChartThu(requireContext(), calendar.get(Calendar.MONTH) + 1);
+        // Observer for revenue data
         viewModel.SpendingInChartThu().observe(getViewLifecycleOwner(), spendingInCharts -> {
             Log.d(TAG, "Revenue data received: " + spendingInCharts.size() + " items");
 
             revenue = 0;
-            List<DataEntry> dataEntries = new ArrayList<>();
-            List<SpendingInChart> spendingInChart = new ArrayList<>();
+            if (!spendingInCharts.isEmpty()) {
+                Map<String, List<SpendingInChart>> listMap = spendingInCharts.stream()
+                        .collect(Collectors.groupingBy(SpendingInChart::getTenDanhMuc));
 
-            if (spendingInCharts.isEmpty()) {
-                Log.d(TAG, "No revenue data available");
-                resetChartAndAdapter();
-                return;
+                listMap.forEach((_tenDanhMuc, list) -> {
+                    long totalAmount = list.stream().mapToLong(SpendingInChart::getTien).sum();
+                    revenue += totalAmount;
+                });
             }
 
-            Map<String, List<SpendingInChart>> listMap = spendingInCharts.stream()
-                    .collect(Collectors.groupingBy(SpendingInChart::getTenDanhMuc));
+            updateTotal();
 
-            listMap.forEach((_tenDanhMuc, list) -> {
-                long totalAmount = list.stream().mapToLong(SpendingInChart::getTien).sum();
-                SpendingInChart s = new SpendingInChart(
-                        totalAmount,
-                        _tenDanhMuc,
-                        list.get(0).getIcon()
-                );
-                spendingInChart.add(s);
-                dataEntries.add(new ValueDataEntry(s.getTenDanhMuc(), totalAmount));
-                revenue += totalAmount;
-            });
-
-            updateChartAndAdapter(dataEntries, spendingInChart);
+            // Update chart if we're on the revenue tab
+            if (binding.tapLayout.getSelectedTabPosition() == 1) {
+                updateRevenueChart(spendingInCharts);
+            }
         });
+    }
+
+    // Fetch both spending and revenue data
+    private void fetchAllData() {
+        viewModel.get_SpendingInChartChi(requireContext(), calendar.get(Calendar.MONTH) + 1);
+        viewModel.get_SpendingInChartThu(requireContext(), calendar.get(Calendar.MONTH) + 1);
+    }
+
+    // Update current tab's chart based on which tab is selected
+    private void updateCurrentTabData() {
+        if (binding == null) return;
+
+        Log.d(TAG, "Updating current tab: " + binding.tapLayout.getSelectedTabPosition());
+
+        if (binding.tapLayout.getSelectedTabPosition() == 0) {
+            // Update spending chart with existing data
+            updateSpendingChart(viewModel.SpendingInChartChi().getValue());
+        } else {
+            // Update revenue chart with existing data
+            updateRevenueChart(viewModel.SpendingInChartThu().getValue());
+        }
+    }
+
+    private void updateSpendingChart(List<SpendingInChart> spendingInCharts) {
+        if (spendingInCharts == null || spendingInCharts.isEmpty()) {
+            resetChartAndAdapter();
+            return;
+        }
+
+        List<DataEntry> dataEntries = new ArrayList<>();
+        List<SpendingInChart> spendingInChart = new ArrayList<>();
+
+        Map<String, List<SpendingInChart>> listMap = spendingInCharts.stream()
+                .collect(Collectors.groupingBy(SpendingInChart::getTenDanhMuc));
+
+        listMap.forEach((_tenDanhMuc, list) -> {
+            long totalAmount = list.stream().mapToLong(SpendingInChart::getTien).sum();
+            SpendingInChart s = new SpendingInChart(
+                    totalAmount,
+                    _tenDanhMuc,
+                    list.get(0).getIcon()
+            );
+            spendingInChart.add(s);
+            dataEntries.add(new ValueDataEntry(s.getTenDanhMuc(), Math.abs(totalAmount)));
+        });
+
+        updateChartAndAdapter(dataEntries, spendingInChart);
+    }
+
+    private void updateRevenueChart(List<SpendingInChart> spendingInCharts) {
+        if (spendingInCharts == null || spendingInCharts.isEmpty()) {
+            resetChartAndAdapter();
+            return;
+        }
+
+        List<DataEntry> dataEntries = new ArrayList<>();
+        List<SpendingInChart> spendingInChart = new ArrayList<>();
+
+        Map<String, List<SpendingInChart>> listMap = spendingInCharts.stream()
+                .collect(Collectors.groupingBy(SpendingInChart::getTenDanhMuc));
+
+        listMap.forEach((_tenDanhMuc, list) -> {
+            long totalAmount = list.stream().mapToLong(SpendingInChart::getTien).sum();
+            SpendingInChart s = new SpendingInChart(
+                    totalAmount,
+                    _tenDanhMuc,
+                    list.get(0).getIcon()
+            );
+            spendingInChart.add(s);
+            dataEntries.add(new ValueDataEntry(s.getTenDanhMuc(), totalAmount));
+        });
+
+        updateChartAndAdapter(dataEntries, spendingInChart);
     }
 
     private void updateChartAndAdapter(List<DataEntry> dataEntries, List<SpendingInChart> spendingInChart) {
@@ -246,9 +299,6 @@ public class ChartFragment extends Fragment {
 
                 // Update adapter
                 adapter.setAdapter(spendingInChart);
-
-                // Update totals
-                updateTotal();
 
                 Log.d(TAG, "Chart updated successfully with " + dataEntries.size() + " entries");
             } catch (Exception e) {
@@ -282,10 +332,6 @@ public class ChartFragment extends Fragment {
 
                 adapter.setAdapter(new ArrayList<>());
 
-                revenue = 0;
-                spending = 0;
-                updateTotal();
-
                 Log.d(TAG, "Chart and adapter reset complete");
             } catch (Exception e) {
                 Log.e(TAG, "Error resetting chart and adapter", e);
@@ -302,19 +348,8 @@ public class ChartFragment extends Fragment {
             setupAnyChartView();
         }
 
-        check();
-    }
-
-    private void check() {
-        if (binding == null) return;
-
-        Log.d(TAG, "Checking current tab: " + binding.tapLayout.getSelectedTabPosition());
-
-        if (binding.tapLayout.getSelectedTabPosition() == 0) {
-            spendingAdapter();
-        } else {
-            revenueAdapter();
-        }
+        // Refresh all data when coming back to this fragment
+        fetchAllData();
     }
 
     private void updateTotal() {
