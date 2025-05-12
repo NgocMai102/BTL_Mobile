@@ -59,33 +59,48 @@ public class ChartFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Ensure AnyChartView is properly initialized
-        setupAnyChartView();
+        // Load view configurations first
         loadView();
+
+        // Setup observers before initializing the chart
         setupObservers();
-        fetchAllData();
+
+        // Setup chart view with delay to ensure view is properly initialized
+        view.post(() -> {
+            setupAnyChartView();
+            fetchAllData();
+        });
     }
 
     private void setupAnyChartView() {
         try {
+            Log.d(TAG, "Setting up AnyChartView");
             anyChartView = binding.anyChart;
 
-            // Ensure the view is not null and is visible
+            // Ensure the view is not null
             if (anyChartView != null) {
                 // Initialize AnyChart library
                 APIlib.getInstance().setActiveAnyChartView(anyChartView);
 
-                // Create pie chart
-                pie = AnyChart.pie();
-                pie.title("Biểu đồ chi tiêu");
-                pie.labels().position("outside");
-                pie.legend().position("bottom");
+                // Create pie chart only if it's null
+                if (pie == null) {
+                    pie = AnyChart.pie();
+                    pie.title("Biểu đồ chi tiêu");
+                    pie.labels().position("outside");
+                    pie.legend().position("bottom");
 
-                // Set the chart to the view
-                anyChartView.setChart(pie);
+                    // Set an empty dataset initially
+                    List<DataEntry> emptyData = new ArrayList<>();
+                    emptyData.add(new ValueDataEntry("Không có dữ liệu", 1));
+                    pie.data(emptyData);
+
+                    // Set the chart to the view
+                    anyChartView.setChart(pie);
+                }
 
                 // Ensure visibility
                 anyChartView.setVisibility(View.VISIBLE);
+                Log.d(TAG, "AnyChartView setup complete");
             } else {
                 Log.e(TAG, "AnyChartView is null");
             }
@@ -232,24 +247,33 @@ public class ChartFragment extends Fragment {
             return;
         }
 
-        List<DataEntry> dataEntries = new ArrayList<>();
-        List<SpendingInChart> spendingInChart = new ArrayList<>();
+        try {
+            List<DataEntry> dataEntries = new ArrayList<>();
+            List<SpendingInChart> spendingInChart = new ArrayList<>();
 
-        Map<String, List<SpendingInChart>> listMap = spendingInCharts.stream()
-                .collect(Collectors.groupingBy(SpendingInChart::getTenDanhMuc));
+            Map<String, List<SpendingInChart>> listMap = spendingInCharts.stream()
+                    .collect(Collectors.groupingBy(SpendingInChart::getTenDanhMuc));
 
-        listMap.forEach((_tenDanhMuc, list) -> {
-            long totalAmount = list.stream().mapToLong(SpendingInChart::getTien).sum();
-            SpendingInChart s = new SpendingInChart(
-                    totalAmount,
-                    _tenDanhMuc,
-                    list.get(0).getIcon()
-            );
-            spendingInChart.add(s);
-            dataEntries.add(new ValueDataEntry(s.getTenDanhMuc(), Math.abs(totalAmount)));
-        });
+            listMap.forEach((_tenDanhMuc, list) -> {
+                long totalAmount = list.stream().mapToLong(SpendingInChart::getTien).sum();
+                SpendingInChart s = new SpendingInChart(
+                        totalAmount,
+                        _tenDanhMuc,
+                        list.get(0).getIcon()
+                );
+                spendingInChart.add(s);
+                dataEntries.add(new ValueDataEntry(s.getTenDanhMuc(), Math.abs(totalAmount)));
+            });
 
-        updateChartAndAdapter(dataEntries, spendingInChart);
+            if (!dataEntries.isEmpty()) {
+                updateChartAndAdapter(dataEntries, spendingInChart);
+            } else {
+                resetChartAndAdapter();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error in updateSpendingChart", e);
+            resetChartAndAdapter();
+        }
     }
 
     private void updateRevenueChart(List<SpendingInChart> spendingInCharts) {
@@ -258,37 +282,68 @@ public class ChartFragment extends Fragment {
             return;
         }
 
-        List<DataEntry> dataEntries = new ArrayList<>();
-        List<SpendingInChart> spendingInChart = new ArrayList<>();
+        try {
+            List<DataEntry> dataEntries = new ArrayList<>();
+            List<SpendingInChart> spendingInChart = new ArrayList<>();
 
-        Map<String, List<SpendingInChart>> listMap = spendingInCharts.stream()
-                .collect(Collectors.groupingBy(SpendingInChart::getTenDanhMuc));
+            Map<String, List<SpendingInChart>> listMap = spendingInCharts.stream()
+                    .collect(Collectors.groupingBy(SpendingInChart::getTenDanhMuc));
 
-        listMap.forEach((_tenDanhMuc, list) -> {
-            long totalAmount = list.stream().mapToLong(SpendingInChart::getTien).sum();
-            SpendingInChart s = new SpendingInChart(
-                    totalAmount,
-                    _tenDanhMuc,
-                    list.get(0).getIcon()
-            );
-            spendingInChart.add(s);
-            dataEntries.add(new ValueDataEntry(s.getTenDanhMuc(), totalAmount));
-        });
+            listMap.forEach((_tenDanhMuc, list) -> {
+                long totalAmount = list.stream().mapToLong(SpendingInChart::getTien).sum();
+                SpendingInChart s = new SpendingInChart(
+                        totalAmount,
+                        _tenDanhMuc,
+                        list.get(0).getIcon()
+                );
+                spendingInChart.add(s);
+                dataEntries.add(new ValueDataEntry(s.getTenDanhMuc(), totalAmount));
+            });
 
-        updateChartAndAdapter(dataEntries, spendingInChart);
+            if (!dataEntries.isEmpty()) {
+                updateChartAndAdapter(dataEntries, spendingInChart);
+            } else {
+                resetChartAndAdapter();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Error in updateRevenueChart", e);
+            resetChartAndAdapter();
+        }
     }
 
     private void updateChartAndAdapter(List<DataEntry> dataEntries, List<SpendingInChart> spendingInChart) {
+        if (getActivity() == null) {
+            Log.e(TAG, "Cannot update chart: activity is null");
+            return;
+        }
+
         requireActivity().runOnUiThread(() -> {
             try {
-                // Defensive checks
-                if (anyChartView == null || pie == null) {
-                    Log.e(TAG, "Cannot update chart: AnyChartView or Pie is null");
-                    setupAnyChartView(); // Attempt to reinitialize
+                // Handle empty data case
+                if (dataEntries == null || dataEntries.isEmpty()) {
+                    resetChartAndAdapter();
                     return;
                 }
 
-                // Clear previous data
+                // Defensive checks and reinitialize if needed
+                if (anyChartView == null || pie == null) {
+                    Log.d(TAG, "Chart components null during update, trying to reinitialize");
+                    setupAnyChartView();
+
+                    // If still null after setup, bail out
+                    if (anyChartView == null || pie == null) {
+                        Log.e(TAG, "Failed to reinitialize chart components");
+                        return;
+                    }
+                }
+
+                // Re-activate the chart view to prevent JS listener errors
+                APIlib.getInstance().setActiveAnyChartView(anyChartView);
+
+                // Set data and title based on tab
+                String title = binding.tapLayout.getSelectedTabPosition() == 0 ?
+                        "Biểu đồ chi tiêu" : "Biểu đồ thu nhập";
+                pie.title(title);
                 pie.data(dataEntries);
 
                 // Ensure the chart is visible
@@ -304,32 +359,62 @@ public class ChartFragment extends Fragment {
             } catch (Exception e) {
                 Log.e(TAG, "Error updating chart", e);
 
-                // Attempt to recover
-                if (getContext() != null) {
-                    try {
-                        // Reinitialize AnyChart library
-                        APIlib.getInstance().setActiveAnyChartView(anyChartView);
-                    } catch (Exception recoveryEx) {
-                        Log.e(TAG, "Failed to recover AnyChart", recoveryEx);
-                    }
+                // Attempt recovery
+                try {
+                    setupAnyChartView();
+                } catch (Exception recovery) {
+                    Log.e(TAG, "Recovery failed", recovery);
                 }
             }
         });
     }
 
     private void resetChartAndAdapter() {
+        if (getActivity() == null) {
+            Log.e(TAG, "Cannot reset chart: activity is null");
+            return;
+        }
+
         requireActivity().runOnUiThread(() -> {
             try {
                 Log.d(TAG, "Resetting chart and adapter");
 
-                if (pie != null) {
-                    pie.data(new ArrayList<>());
+                // Create an empty data list
+                List<DataEntry> emptyData = new ArrayList<>();
+
+                // Add a single placeholder data entry to show an empty chart
+                emptyData.add(new ValueDataEntry("Không có dữ liệu", 1));
+
+                // Check if anyChartView is initialized
+                if (anyChartView == null) {
+                    Log.d(TAG, "AnyChartView is null during reset, trying to reinitialize");
+                    setupAnyChartView();
                 }
 
+                // Re-activate the chart view to prevent JS listener errors
                 if (anyChartView != null) {
-                    anyChartView.setVisibility(View.GONE);
+                    APIlib.getInstance().setActiveAnyChartView(anyChartView);
+
+                    // Reset or initialize the pie chart
+                    if (pie == null) {
+                        pie = AnyChart.pie();
+                        pie.title("Không có dữ liệu cho thời gian này");
+                        pie.labels().position("outside");
+                        pie.legend().position("bottom");
+                        anyChartView.setChart(pie);
+                    } else {
+                        pie.title("Không có dữ liệu cho thời gian này");
+                    }
+
+                    // Set the empty data
+                    pie.data(emptyData);
+
+                    // Ensure visibility
+                    anyChartView.setVisibility(View.VISIBLE);
+                    anyChartView.invalidate(); // Force refresh
                 }
 
+                // Reset adapter
                 adapter.setAdapter(new ArrayList<>());
 
                 Log.d(TAG, "Chart and adapter reset complete");
