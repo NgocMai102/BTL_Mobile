@@ -2,6 +2,7 @@ package com.example.btl_android.Model;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "DanhMuc")
@@ -18,6 +19,7 @@ public class DanhMuc {
     public DanhMuc() {
     }
 
+    @Ignore
     public DanhMuc(int Id, String icon, String tenDanhMuc, Boolean thuChi) {
         this.Id = Id;
         this.icon = icon;

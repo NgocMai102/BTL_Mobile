@@ -3,7 +3,9 @@ package com.example.btl_android.Model;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.Index;
 
 import com.example.btl_android.Model.DanhMuc;
 
@@ -12,7 +14,9 @@ import com.example.btl_android.Model.DanhMuc;
         parentColumns = "Id",
         childColumns = "IdHoaDon",
         onDelete = ForeignKey.NO_ACTION
-))
+        ),
+        indices = {@Index(value = {"IdHoaDon"})}
+)
 public class NguoiDung {
 
     @PrimaryKey(autoGenerate = true)
@@ -29,6 +33,7 @@ public class NguoiDung {
     @ColumnInfo(name = "IdHoaDon")
     private Long IdHoaDon;
 
+    @Ignore
     public NguoiDung(int id, String Ten, String Sdt, Long KhoanChi, Boolean TrangThai, Long IdHoaDon) {
         this.id = id;
         this.Ten = Ten;

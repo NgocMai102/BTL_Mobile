@@ -86,7 +86,7 @@
                     <TextView
                         android:gravity="center"
                         android:id="@+id/tv_spending_money"
-                        android:textColor="#f84735"
+                        android:textColor="@color/red"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="0đ" />
@@ -106,7 +106,7 @@
                     <TextView
                         android:gravity="center"
                         android:id="@+id/tv_Total"
-                        android:textColor="#f84735"
+                        android:textColor="@color/red"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="-0đ" />

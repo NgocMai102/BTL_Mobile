@@ -2,6 +2,7 @@ package com.example.btl_android.Model;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 @Entity(tableName = "HoaDon")
 public class HoaDon {
@@ -23,6 +24,7 @@ public class HoaDon {
     public HoaDon() {
     }
 
+    @Ignore
     public HoaDon( Long TongTien, String Mota, Integer SoLuong, String Ngay) {
         this.TongTien = TongTien;
         this.Mota = Mota;

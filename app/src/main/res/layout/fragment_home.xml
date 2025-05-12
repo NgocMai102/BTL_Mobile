@@ -44,6 +44,10 @@
                         android:text="Tiền chi"
                         android:textColor="@color/white" />
 
+                    <Space
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"/>
+
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btn_tien_thu"
                         android:layout_width="106dp"
@@ -173,7 +177,7 @@
                     android:textSize="16sp" />
 
                 <Space
-                    android:layout_width="35dp"
+                    android:layout_width="29dp"
                     android:layout_height="wrap_content" />
 
                 <com.google.android.material.textfield.TextInputLayout
