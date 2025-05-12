@@ -24,6 +24,15 @@
         <activity android:name=".View.edit_directory.EditDirectoryActivity" />
         <activity android:name=".View.add_directory.AddDirectoryActivity" />
         <activity android:name=".View.edit_spending.EditSpendingActivity" />
+        <activity
+            android:name=".View.history_sharing.HistoryShareMoneyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".View.shareing_detail.MoneySharingDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".View.searchmoney.ShareMoneyActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
