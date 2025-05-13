@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.btl_android.Model.SpendingInChart;
-import com.example.btl_android.databinding.ItemSpendingBinding;
+import com.example.btl_android.databinding.ItemSpending2Binding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +17,9 @@ public class ChartAdapter extends RecyclerView.Adapter<ChartAdapter.ViewHoder> {
     private List<SpendingInChart> listAdapter = new ArrayList<>();
 
     public static class ViewHoder extends RecyclerView.ViewHolder {
-        public ItemSpendingBinding binding;
+        public ItemSpending2Binding binding;
 
-        public ViewHoder(ItemSpendingBinding binding) {
+        public ViewHoder(ItemSpending2Binding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
@@ -27,7 +27,7 @@ public class ChartAdapter extends RecyclerView.Adapter<ChartAdapter.ViewHoder> {
 
     @Override
     public ChartAdapter.ViewHoder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ItemSpendingBinding binding = ItemSpendingBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        ItemSpending2Binding binding = ItemSpending2Binding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         return new ViewHoder(binding);
     }
 
@@ -35,7 +35,7 @@ public class ChartAdapter extends RecyclerView.Adapter<ChartAdapter.ViewHoder> {
     public void onBindViewHolder(ChartAdapter.ViewHoder holder, int position) {
         holder.binding.imvAvtSpending.setImageBitmap(decodeBase64ToBitmap(listAdapter.get(position).getIcon()));
         holder.binding.tvNameDiretory.setText(listAdapter.get(position).getTenDanhMuc());
-        holder.binding.tvSpendingMoney.setText(String.valueOf(listAdapter.get(position).getTien()));
+        holder.binding.tvSpendingMoney.setText(String.valueOf(listAdapter.get(position).getTien()) + " đ");
     }
 
     @Override

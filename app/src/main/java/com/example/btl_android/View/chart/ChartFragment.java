@@ -109,36 +109,6 @@ public class ChartFragment extends Fragment {
         }
     }
 
-    private void initializeChart() {
-        try {
-            // Ensure the chart view has the correct visibility and dimensions
-            if (anyChartView != null) {
-                // Log the view's dimensions
-                Log.d(TAG, "AnyChartView Width: " + anyChartView.getWidth());
-                Log.d(TAG, "AnyChartView Height: " + anyChartView.getHeight());
-
-                // Ensure the view is visible and has dimensions
-                anyChartView.setVisibility(View.VISIBLE);
-
-                pie = AnyChart.pie();
-                pie.title("Biểu đồ chi tiêu");
-                pie.labels().position("outside");
-                pie.legend().position("bottom");
-
-                // Explicitly set chart
-                anyChartView.setChart(pie);
-
-                // Force layout update
-                anyChartView.requestLayout();
-                anyChartView.invalidate();
-            } else {
-                Log.e(TAG, "AnyChartView is null - cannot initialize chart");
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Chart initialization error", e);
-        }
-    }
-
     private void loadView() {
         binding.recyclerview.setAdapter(adapter);
         binding.tapLayout.addTab(binding.tapLayout.newTab().setText("Chi tiêu"));
