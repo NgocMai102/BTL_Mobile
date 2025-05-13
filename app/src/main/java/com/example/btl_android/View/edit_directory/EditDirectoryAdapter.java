@@ -5,18 +5,12 @@ import static com.example.btl_android.Helper.ViewExtention.decodeBase64ToBitmap;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.btl_android.Model.DanhMuc;
-import com.example.btl_android.R;
-import com.example.btl_android.View.add_directory.AddDirectoryAdapter;
-import com.example.btl_android.View.home.DirectoryAdapter;
 import com.example.btl_android.databinding.ItemEditDirectoryBinding;
 
 import java.util.ArrayList;

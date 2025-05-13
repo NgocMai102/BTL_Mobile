@@ -36,10 +36,23 @@ public class EditDirectoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityEditDirectoryBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         getView();
-        onClickTienChi();
-        getDataCHi();
+
+        if (getIntent().hasExtra("trangThai")) {
+            thuCHi = getIntent().getBooleanExtra("trangThai", true); // mặc định là chi
+        }
+
+        if (thuCHi) {
+            onClickTienChi();
+            getDataCHi();
+        } else {
+            onClickTienThu();
+            getDataThu();
+        }
+
         binding.recyclerview.setAdapter(adapter);
+
         binding.btnTienChi.setOnClickListener(v -> {
             thuCHi = true;
             onClickTienChi();
@@ -60,6 +73,7 @@ public class EditDirectoryActivity extends AppCompatActivity {
 
         binding.imbtnBack.setOnClickListener(v -> finish());
     }
+
     private void getView() {
         viewModel = new ViewModelProvider(this).get(EditDirectoryViewModel.class);
         listDirectory = new ArrayList<>();
@@ -132,6 +146,7 @@ public class EditDirectoryActivity extends AppCompatActivity {
         intent.putExtra("id", danhMuc.getId());
         intent.putExtra("icon", danhMuc.getIcon());
         intent.putExtra("mode", "edit");
+        intent.putExtra("thuChi", thuCHi);
         startActivity(intent);
     }
 
