@@ -111,11 +111,11 @@ public class ChartFragment extends Fragment {
 
     private void loadView() {
         binding.recyclerview.setAdapter(adapter);
-        binding.tapLayout.addTab(binding.tapLayout.newTab().setText("Chi tiêu"));
-        binding.tapLayout.addTab(binding.tapLayout.newTab().setText("Thu nhập"));
+        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Chi tiêu"));
+        binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Thu nhập"));
         binding.tvMonth.setText("Tháng " + (calendar.get(Calendar.MONTH) + 1));
 
-        binding.tapLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        binding.tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 updateCurrentTabData();
@@ -128,13 +128,13 @@ public class ChartFragment extends Fragment {
             }
         });
 
-        binding.imvBackNonth.setOnClickListener(v -> {
+        binding.imvBackMonth.setOnClickListener(v -> {
             calendar.add(Calendar.MONTH, -1);
             binding.tvMonth.setText("Tháng " + (calendar.get(Calendar.MONTH) + 1));
             fetchAllData();
         });
 
-        binding.imvIncreaseMonth.setOnClickListener(v -> {
+        binding.imvForwardMonth.setOnClickListener(v -> {
             calendar.add(Calendar.MONTH, 1);
             binding.tvMonth.setText("Tháng " + (calendar.get(Calendar.MONTH) + 1));
             fetchAllData();
@@ -161,7 +161,7 @@ public class ChartFragment extends Fragment {
             updateTotal();
 
             // Update chart if we're on the spending tab
-            if (binding.tapLayout.getSelectedTabPosition() == 0) {
+            if (binding.tabLayout.getSelectedTabPosition() == 0) {
                 updateSpendingChart(spendingInCharts);
             }
         });
@@ -184,7 +184,7 @@ public class ChartFragment extends Fragment {
             updateTotal();
 
             // Update chart if we're on the revenue tab
-            if (binding.tapLayout.getSelectedTabPosition() == 1) {
+            if (binding.tabLayout.getSelectedTabPosition() == 1) {
                 updateRevenueChart(spendingInCharts);
             }
         });
@@ -200,9 +200,9 @@ public class ChartFragment extends Fragment {
     private void updateCurrentTabData() {
         if (binding == null) return;
 
-        Log.d(TAG, "Updating current tab: " + binding.tapLayout.getSelectedTabPosition());
+        Log.d(TAG, "Updating current tab: " + binding.tabLayout.getSelectedTabPosition());
 
-        if (binding.tapLayout.getSelectedTabPosition() == 0) {
+        if (binding.tabLayout.getSelectedTabPosition() == 0) {
             // Update spending chart with existing data
             updateSpendingChart(viewModel.SpendingInChartChi().getValue());
         } else {
@@ -311,7 +311,7 @@ public class ChartFragment extends Fragment {
                 APIlib.getInstance().setActiveAnyChartView(anyChartView);
 
                 // Set data and title based on tab
-                String title = binding.tapLayout.getSelectedTabPosition() == 0 ?
+                String title = binding.tabLayout.getSelectedTabPosition() == 0 ?
                         "Biểu đồ chi tiêu" : "Biểu đồ thu nhập";
                 pie.title(title);
                 pie.data(dataEntries);
