@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.btl_android.Model.HoaDon;
 import com.example.btl_android.R;
 import com.example.btl_android.databinding.ItemHistoryBinding;
+import com.example.btl_android.databinding.ItemMoneySharingDetailsBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,13 +77,11 @@ public class HistoryShareMoneyAdapter extends RecyclerView.Adapter<HistoryShareM
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.delete:
-                        clickListener.onClickDelete(hoaDon);
-                        return true;
-                    default:
-                        return false;
+                if (item.getItemId() == R.id.delete) {
+                    clickListener.onClickDelete(hoaDon);
+                    return true;
                 }
+                return false;
             }
         });
         popupMenu.show();
