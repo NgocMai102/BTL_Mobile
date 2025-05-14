@@ -1,95 +1,57 @@
-package com.example.btl_android.View.menu;
-
-import android.app.AlertDialog;
-import android.content.Intent;
-import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.example.btl_android.R;
-import com.example.btl_android.View.history_sharing.HistoryShareMoneyActivity;
-import com.example.btl_android.View.searchmoney.ShareMoneyActivity;
-import com.example.btl_android.Components.DataBaseManager;
-import com.example.btl_android.databinding.FragmentMenuBinding;
-
-import java.util.Calendar;
-
-public class MenuFragment extends Fragment {
-    private FragmentMenuBinding binding;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        binding = FragmentMenuBinding.inflate(getLayoutInflater());
-    }
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        onClick();
-        return binding.getRoot();
-    }
-
-    private void onClick() {
-        binding.lnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                delete();
-            }
-
-        });
-        binding.lnShareMoney.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shareMoney();
-            }
-        });
-        binding.lnHistory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                history();
-            }
-        });
-    }
-
-    private void history() {
-        Log.d("MenuFragment", "Opening HistoryShareMoneyActivity...");
-        startActivity(new Intent(requireContext(), HistoryShareMoneyActivity.class));
-    }
-
-    private void shareMoney() {
-        startActivity(new Intent(requireContext(), ShareMoneyActivity.class));
-    }
-
-    private void delete() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Câu hỏi")
-                .setMessage(
-                        "Bạn có chắc chắn muốn xóa tất cả dữ liệu? Thao tác này không thể\n" +
-                                "hoàn tác lại."
-                )
-                .setPositiveButton("Yes", (dialog, which) -> {
-                    try {
-                        DataBaseManager.deleteAllTable();
-
-                    } catch (Exception e) {
-                        e.getMessage();
-
-                    }
-
-                    dialog.dismiss();
-                })
-                .setNegativeButton("No", (dialog, which) -> {
-                    dialog.dismiss();
-                });
-
-        AlertDialog dialog = builder.create();
-        dialog.show();
-
-    }
-
-}
+//package com.example.btl_android.View.menu;
+//
+//import android.content.Intent;
+//import android.os.Bundle;
+//import androidx.fragment.app.Fragment;
+//import androidx.recyclerview.widget.LinearLayoutManager;
+//import androidx.recyclerview.widget.RecyclerView;
+//
+//import android.view.LayoutInflater;
+//import android.view.View;
+//import android.view.ViewGroup;
+//
+//import com.example.btl_android.R;
+//import com.example.btl_android.View.event.EventActivity;
+//
+//import java.util.ArrayList;
+//import java.util.List;
+//
+//public class MenuFragment extends Fragment {
+//
+//    private RecyclerView recyclerView;
+//
+//    public MenuFragment() {}
+//
+//
+//    @Override
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                             Bundle savedInstanceState) {
+//        View view = inflater.inflate(R.layout.fragment_menu, container, false);
+//
+//        recyclerView = view.findViewById(R.id.menu_recycler_view);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+//
+//        List<MenuItem> menuList = new ArrayList<>();
+//        menuList.add(new MenuItem(R.drawable.icon_schedule, "Sự kiện"));
+//        menuList.add(new MenuItem(R.drawable.icon_chart, "Báo cáo danh mục theo năm"));
+//        menuList.add(new MenuItem(R.drawable.icon_find, "Tìm kiếm giao dịch"));
+//
+//        MenuAdapter adapter = new MenuAdapter(menuList, position -> {
+//            switch (position) {
+//                case 0: // Events
+//                    startActivity(new Intent(getActivity(), EventActivity.class));
+//                    break;
+//                case 1: // Yearly Report
+//                    //startActivity(new Intent(getActivity(), YearlyReportActivity.class));
+//                    break;
+//                case 2: // Find Transaction
+//                    //startActivity(new Intent(getActivity(), FindTransactionActivity.class));
+//                    break;
+//            }
+//        });
+//
+//        recyclerView.setAdapter(adapter);
+//
+//        return view;
+//    }
+//}
