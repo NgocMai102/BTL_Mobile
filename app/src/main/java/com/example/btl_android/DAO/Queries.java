@@ -83,5 +83,13 @@ public interface Queries {
 
     @Query("Delete from NguoiDung where IdHoaDon = :id")
     public Integer xoaNguoiDung(Long id);
+    @Update
+    public void chinhSuaNguoiDung(NguoiDung nguoiDung);
+    @Query("SELECT * from HoaDon where id = :id")
+    public HoaDon timKiemHoaDon(Long id);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public void themNguoiDungs(List<NguoiDung> nguoiDungs);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public Long themHoaDon(HoaDon hoaDon);
 }
