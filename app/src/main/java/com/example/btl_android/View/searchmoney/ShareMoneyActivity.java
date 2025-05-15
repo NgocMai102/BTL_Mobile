@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.btl_android.Constants;
 import com.example.btl_android.Model.HoaDon;
 import com.example.btl_android.Model.NguoiDung;
-import com.example.btl_android.View.shareing_detail.MoneySharingDetailsActivity;
+import com.example.btl_android.View.sharing_detail.MoneySharingDetailsActivity;
 import com.example.btl_android.databinding.ActivityShareMoneyBinding;
 import com.example.btl_android.databinding.DialogAddMemberBinding;
 import com.example.btl_android.databinding.DialogUpdateUserBinding;

@@ -124,4 +124,6 @@ public class GiaoDich {
     public void setIdDanhMuc(int idDanhMuc) {
         this.idDanhMuc = idDanhMuc;
     }
+
+
 }

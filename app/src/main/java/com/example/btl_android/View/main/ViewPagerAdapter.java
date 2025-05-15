@@ -8,6 +8,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.example.btl_android.View.calendar.CalendarFragment;
 import com.example.btl_android.View.chart.ChartFragment;
 import com.example.btl_android.View.home.HomeFragment;
+import com.example.btl_android.View.menu.MenuFragment;
 //import com.example.btl_android.View.menu.MenuFragment;
 
 public class ViewPagerAdapter extends FragmentStateAdapter {
@@ -29,11 +30,10 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
                 return new HomeFragment();
             case 1:
                 return new CalendarFragment();
-//            case 2:
-            default:
+            case 2:
                 return new ChartFragment();
-//            default:
-//                return new MenuFragment();
+            default:
+                return new MenuFragment();
         }
     }
 }

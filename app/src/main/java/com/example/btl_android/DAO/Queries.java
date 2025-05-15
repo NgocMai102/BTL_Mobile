@@ -1,5 +1,6 @@
 package com.example.btl_android.DAO;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -8,17 +9,17 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.example.btl_android.Model.DanhMuc;
-import com.example.btl_android.Model.GiaoDich;
-import com.example.btl_android.Model.SpendingInCalendar;
 import com.example.btl_android.Model.HoaDon;
 import com.example.btl_android.Model.NguoiDung;
+import com.example.btl_android.Model.SuKien;
+import com.example.btl_android.Model.GiaoDich;
+import com.example.btl_android.Model.SpendingInCalendar;
 import com.example.btl_android.Model.SpendingInChart;
 
 import java.util.List;
 
 @Dao
 public interface Queries {
-    // GIAO DỊCH
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public Long themNguoiGiaoDich(GiaoDich giaoDich);
 
@@ -72,17 +73,21 @@ public interface Queries {
     public List<DanhMuc> timKiemDanhMucThu();
 
     @Delete
-    public Integer xoaDanhMuc(DanhMuc danhMuc);  @Query("SELECT * from HoaDon")
-    public List<HoaDon> getAllHoaDon();
+    public Integer xoaDanhMuc(DanhMuc danhMuc);
 
+    @Query("select * from SuKien")
+    public LiveData<List<SuKien>> getAllSuKien();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public Long themSuKien(SuKien suKien);
     @Delete
-    public Integer xoaHoaDon(HoaDon hoaDon);
+    void xoaSuKien(SuKien suKien);
+    @Update
+    void capNhatSuKien(SuKien suKien);
 
-    @Query("SELECT * from NguoiDung where IdHoaDon = :id")
-    public List<NguoiDung> timKiemNguoiDungTheoHoaDon(Long id);
+    @Query("SELECT * FROM SuKien WHERE ChuKy != 'NONE'")
+    List<SuKien> getRecurringEvents();
 
-    @Query("Delete from NguoiDung where IdHoaDon = :id")
-    public Integer xoaNguoiDung(Long id);
     @Update
     public void chinhSuaNguoiDung(NguoiDung nguoiDung);
     @Query("SELECT * from HoaDon where id = :id")
@@ -92,4 +97,16 @@ public interface Queries {
     public void themNguoiDungs(List<NguoiDung> nguoiDungs);
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public Long themHoaDon(HoaDon hoaDon);
+
+    @Query("SELECT * from NguoiDung where IdHoaDon = :id")
+    public List<NguoiDung> timKiemNguoiDungTheoHoaDon(Long id);
+
+    @Query("Delete from NguoiDung where IdHoaDon = :id")
+    public Integer xoaNguoiDung(Long id);
+
+    @Query("SELECT * from HoaDon")
+    public List<HoaDon> getAllHoaDon();
+
+    @Delete
+    public Integer xoaHoaDon(HoaDon hoaDon);
 }

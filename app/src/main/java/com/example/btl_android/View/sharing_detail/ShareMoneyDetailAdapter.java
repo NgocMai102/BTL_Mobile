@@ -1,4 +1,4 @@
-package com.example.btl_android.View.shareing_detail;
+package com.example.btl_android.View.sharing_detail;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
