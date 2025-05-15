@@ -40,7 +40,7 @@ public class SearchTransactionActivity extends AppCompatActivity {
         rvSearchResult = findViewById(R.id.rvSearchResult);
 
         giaoDichList = getAllGiaoDichFromDatabase(); // get full list
-        filteredList = new ArrayList<>();
+        filteredList = new ArrayList<>(giaoDichList);
 
         adapter = new TransactionAdapter(filteredList); // Your existing adapter
         rvSearchResult.setLayoutManager(new LinearLayoutManager(this));
