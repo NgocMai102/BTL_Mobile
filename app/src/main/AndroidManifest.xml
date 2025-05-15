@@ -13,6 +13,15 @@
         android:theme="@style/Theme.BTL_ANDROID"
         tools:targetApi="31">
         <activity
+            android:name=".View.search_transaction.SearchTransactionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".View.event.AddEventActivity"
+            android:exported="false" />
+        <activity
+            android:name=".View.event.EventActivity"
+            android:exported="false" />
+        <activity
             android:name=".View.main.MainActivity"
             android:exported="true">
             <intent-filter>
@@ -28,7 +37,7 @@
             android:name=".View.history_sharing.HistoryShareMoneyActivity"
             android:exported="false" />
         <activity
-            android:name=".View.shareing_detail.MoneySharingDetailsActivity"
+            android:name=".View.sharing_detail.MoneySharingDetailsActivity"
             android:exported="false" />
         <activity
             android:name=".View.searchmoney.ShareMoneyActivity"

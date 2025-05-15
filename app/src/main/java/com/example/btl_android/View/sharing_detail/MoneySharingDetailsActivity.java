@@ -1,4 +1,4 @@
-package com.example.btl_android.View.shareing_detail;
+package com.example.btl_android.View.sharing_detail;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,7 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.Constants;
+//import com.example.Constants;
+import com.example.btl_android.Helper.Constants;
 import com.example.btl_android.Model.HoaDon;
 import com.example.btl_android.Model.NguoiDung;
 import com.example.btl_android.databinding.ActivityMoneySharingDetailsBinding;

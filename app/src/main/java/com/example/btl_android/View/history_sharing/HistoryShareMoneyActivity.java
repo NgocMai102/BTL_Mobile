@@ -8,7 +8,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.btl_android.Model.HoaDon;
-import com.example.btl_android.View.shareing_detail.MoneySharingDetailsActivity;
+import com.example.btl_android.View.sharing_detail.MoneySharingDetailsActivity;
 import com.example.btl_android.databinding.ActivityHistoryShareMoneyBinding;
 
 import java.util.List;

@@ -15,13 +15,12 @@ import com.example.btl_android.Model.DanhMuc;
 import com.example.btl_android.Model.GiaoDich;
 import com.example.btl_android.Model.HoaDon;
 import com.example.btl_android.Model.NguoiDung;
+import com.example.btl_android.Model.SuKien;
 import com.example.btl_android.R;
 
 import java.util.concurrent.CompletableFuture;
 
-import kotlinx.coroutines.GlobalScope;
-
-@Database(entities = {DanhMuc.class, GiaoDich.class, HoaDon.class, NguoiDung.class}, version = 2, exportSchema = false)
+@Database(entities = {DanhMuc.class, GiaoDich.class, HoaDon.class, NguoiDung.class, SuKien.class}, version = 3, exportSchema = false)
 public abstract class DataBaseManager extends RoomDatabase {
     public abstract Queries getItemDAO();
 

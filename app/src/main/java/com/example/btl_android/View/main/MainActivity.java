@@ -1,16 +1,27 @@
 package com.example.btl_android.View.main;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.Constraints;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
+import com.example.btl_android.Helper.PeriodicTransactionWorker;
 import com.example.btl_android.R;
 import com.example.btl_android.databinding.ActivityMainBinding;
+
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
@@ -22,6 +33,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setupNavigation();
+        setupPeriodicWork();
+    }
+
+    private void setupPeriodicWork() {
+
+        // Create a PeriodicWorkRequest that runs daily
+        // WorkManager will ensure it only runs when conditions are met
+        PeriodicWorkRequest saveWorkRequest = new PeriodicWorkRequest.Builder(
+                PeriodicTransactionWorker.class,
+                1, // Repeat interval
+                TimeUnit.DAYS)
+                .build();
+
+        // Enqueue unique work to avoid duplicates
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                "periodic_transaction_work",
+                ExistingPeriodicWorkPolicy.KEEP, // Keep existing work if it exists
+                saveWorkRequest);
     }
 
     private void setupNavigation() {

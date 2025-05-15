@@ -44,8 +44,9 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation(libs.anychart)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation("com.github.AnyChart:AnyChart-Android:1.1.5")
+    implementation("androidx.work:work-runtime:2.9.0")
 }

@@ -1,4 +1,4 @@
-package com.example.btl_android.View.shareing_detail;
+package com.example.btl_android.View.sharing_detail;
 
 import android.content.Context;
 
@@ -6,9 +6,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.btl_android.Components.DataBaseManager;
 import com.example.btl_android.Model.HoaDon;
 import com.example.btl_android.Model.NguoiDung;
-import com.example.btl_android.Components.DataBaseManager;
 
 import java.util.List;
 
@@ -32,4 +32,5 @@ public class MoneySharingDetailsViewModel extends ViewModel {
     public void editMember(NguoiDung nguoiDung,Context context){
         DataBaseManager.getInstance(context).getItemDAO().chinhSuaNguoiDung(nguoiDung);
     }
+
 }
