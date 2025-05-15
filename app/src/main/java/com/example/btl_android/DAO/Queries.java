@@ -47,6 +47,9 @@ public interface Queries {
     @Query("select * from GiaoDich where Id = :id")
     public GiaoDich timKiemGiaoDichTheoId(Long id);
 
+    @Query("SELECT * FROM GiaoDich")
+    public List<GiaoDich> getAllGiaoDich();
+
     @Query("SELECT GiaoDich.Tien, DanhMuc.TenDanhMuc, DanhMuc.Icon FROM GiaoDich INNER JOIN DanhMuc ON GiaoDich.IdDanhMuc = DanhMuc.Id WHERE GiaoDich.ThangGiaoDich = :thang AND GiaoDich.ThuChi = 1")
     public List<SpendingInChart> timKiemGiaoDichChiBieuDo(int thang);
 

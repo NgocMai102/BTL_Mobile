@@ -119,7 +119,6 @@ public class AddEventActivity extends AppCompatActivity {
                 }
             }
 
-            // Optional: Store this to update instead of inserting
             viewModel.setEditingSuKien(editingEvent);
         }
 

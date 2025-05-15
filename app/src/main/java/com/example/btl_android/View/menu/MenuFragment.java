@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.example.btl_android.R;
 import com.example.btl_android.View.event.EventActivity;
 import com.example.btl_android.View.history_sharing.HistoryShareMoneyActivity;
+import com.example.btl_android.View.search_transaction.SearchTransactionActivity;
 import com.example.btl_android.View.searchmoney.ShareMoneyActivity;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class MenuFragment extends Fragment {
                     startActivity(new Intent(getActivity(), EventActivity.class));
                     break;
                 case 1: // Yearly Report
-                    startActivity(new Intent(getActivity(), ShareMoneyActivity.class));
+                    startActivity(new Intent(getActivity(), SearchTransactionActivity.class));
                     break;
                 case 2: // Find Transaction
                     startActivity(new Intent(getActivity(), ShareMoneyActivity.class));

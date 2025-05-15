@@ -44,7 +44,7 @@ public class EventActivity extends AppCompatActivity {
         }
         recyclerView = findViewById(R.id.event_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        MaterialToolbar backIcon = findViewById(R.id.toolbar_back); // or R.id.toolbar_back for the first one
+        ImageView backIcon = findViewById(R.id.imv_back_day); // or R.id.toolbar_back for the first one
         backIcon.setOnClickListener(v -> finish());
 
         viewModel = new ViewModelProvider(this).get(EventViewModel.class);
