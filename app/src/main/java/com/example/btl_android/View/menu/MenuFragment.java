@@ -1,5 +1,6 @@
 package com.example.btl_android.View.menu;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.btl_android.Components.DataBaseManager;
 import com.example.btl_android.R;
 import com.example.btl_android.View.event.EventActivity;
 import com.example.btl_android.View.history_sharing.HistoryShareMoneyActivity;
@@ -25,6 +27,32 @@ public class MenuFragment extends Fragment {
 
     public MenuFragment() {}
 
+    private void delete() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Câu hỏi")
+                .setMessage(
+                        "Bạn có chắc chắn muốn xóa tất cả dữ liệu? Thao tác này không thể\n" +
+                                "hoàn tác lại."
+                )
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    try {
+                        DataBaseManager.deleteAllTable();
+
+                    } catch (Exception e) {
+                        e.getMessage();
+
+                    }
+
+                    dialog.dismiss();
+                })
+                .setNegativeButton("No", (dialog, which) -> {
+                    dialog.dismiss();
+                });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,8 +65,9 @@ public class MenuFragment extends Fragment {
         List<MenuItem> menuList = new ArrayList<>();
         menuList.add(new MenuItem(R.drawable.icon_schedule, "Sự kiện"));
         menuList.add(new MenuItem(R.drawable.icon_find, "Tìm kiếm giao dịch"));
-        menuList.add(new MenuItem(R.drawable.baseline_bank, "Chia tiền")) ;
-        menuList.add(new MenuItem(R.drawable.history, "Lịch sử chia tiền")) ;
+        menuList.add(new MenuItem(R.drawable.money, "Chia tiền")) ;
+        menuList.add(new MenuItem(R.drawable.clock, "Lịch sử chia tiền")) ;
+        menuList.add(new MenuItem(R.drawable.deleteall, "Xoá tất cả dữ liệu")) ;
         MenuAdapter adapter = new MenuAdapter(menuList, position -> {
             switch (position) {
                 case 0: // Events
@@ -52,6 +81,9 @@ public class MenuFragment extends Fragment {
                     break;
                 case 3:
                     startActivity(new Intent(getActivity(), HistoryShareMoneyActivity.class));
+                    break;
+                case 4:
+                    delete();
                     break;
             }
         });
