@@ -222,15 +222,16 @@
             <Space
                 android:layout_width="0dp"
                 android:layout_height="10dp"/>
-            <androidx.recyclerview.widget.RecyclerView
-                android:paddingHorizontal="20dp"
-                android:id="@+id/recyclerview"
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerview"
+                android:layout_width="match_parent"
+
+                android:layout_height="301dp"
+                android:paddingHorizontal="20dp"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                 app:spanCount="3"
-                tools:itemCount="12"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                tools:itemCount="12" />
             <Space
                 android:layout_width="0dp"
                 android:layout_height="8dp"/>
