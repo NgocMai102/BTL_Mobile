@@ -64,10 +64,15 @@ public class ShareMoneyActivity extends AppCompatActivity {
         attributes.gravity = Gravity.BOTTOM;
         hhe.getWindow().setAttributes(attributes);
         dialogBinding.btnUpdateMember.setOnClickListener(view -> {
-            if (dialogBinding.edtName.getEditText().getText().toString().isEmpty()
-                    || dialogBinding.edtSpending.getEditText().getText().toString().isEmpty()
-                    || dialogBinding.edtPhone.getEditText().getText().toString().isEmpty())
+            String name1 = dialogBinding.edtName.getEditText().getText().toString().trim();
+            String spendingStr = dialogBinding.edtSpending.getEditText().getText().toString().trim();
+            String phone1 = dialogBinding.edtPhone.getEditText().getText().toString().trim();
+
+            if (name1.isEmpty() || spendingStr.isEmpty() || phone1.isEmpty()) {
                 Constants.showToast("Vui lòng nhập đầy đủ thông tin", getApplicationContext());
+            } else if (!phone1.matches("0\\d{9}")) {
+                Constants.showToast("Số điện thoại không hợp lệ", getApplicationContext());
+            }
             else {
                 String name = dialogBinding.edtName.getEditText().getText().toString();
                 String phone = dialogBinding.edtPhone.getEditText().getText().toString();
@@ -147,7 +152,9 @@ public class ShareMoneyActivity extends AppCompatActivity {
         hhe.getWindow().setAttributes(attributes);
         dialogBinding.btnAddMember.setOnClickListener(view -> {
             if (dialogBinding.edtName.getEditText().getText().toString().isEmpty() ||
-                    dialogBinding.edtSpending.getEditText().getText().toString().isEmpty()) {
+                    dialogBinding.edtSpending.getEditText().getText().toString().isEmpty() ||
+                    dialogBinding.edtPhone.getEditText().getText().toString().isEmpty()
+            ) {
                 Constants.showToast("Vui lòng nhập đầy đủ thông tin",
                         getApplicationContext());
             } else {
