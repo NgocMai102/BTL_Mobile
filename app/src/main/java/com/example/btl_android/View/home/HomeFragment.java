@@ -24,8 +24,11 @@ import com.example.btl_android.Model.GiaoDich;
 import com.example.btl_android.R;
 import com.example.btl_android.View.edit_directory.EditDirectoryActivity;
 import com.example.btl_android.databinding.FragmentHomeBinding;
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
@@ -176,8 +179,10 @@ public class HomeFragment extends Fragment {
                 calendar.set(Calendar.YEAR, yearPicker);
                 calendar.set(Calendar.MONTH, monthPicker );
                 calendar.set(Calendar.DAY_OF_MONTH, dayOfMonthPicker);
-                String selectedDate = calendar.get(Calendar.DAY_OF_MONTH) + "/" +
-                        (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR); // Month is zero-based
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                String selectedDate = sdf.format(calendar.getTime());
+//                String selectedDate = calendar.get(Calendar.DAY_OF_MONTH) + "/" +
+//                        (calendar.get(Calendar.MONTH) + 1) + "/" + calendar.get(Calendar.YEAR); // Month is zero-based
                 binding.tvDay.setText(selectedDate);
             }
         },
@@ -188,6 +193,10 @@ public class HomeFragment extends Fragment {
 
     private void onClickTienThu() {
         getDanhMucThu();
+
+        calendar = Calendar.getInstance();
+        String formattedDate = String.format("%02d/%02d/%04d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
+        binding.tvDay.setText(formattedDate);
 
         binding.btnTienThu.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.rounded_blue));
         binding.btnTienThu.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
@@ -201,6 +210,10 @@ public class HomeFragment extends Fragment {
 
     private void onClickTienChi() {
         getDanhMucChi();
+
+        calendar = Calendar.getInstance();
+        String formattedDate = String.format("%02d/%02d/%04d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
+        binding.tvDay.setText(formattedDate);
 
         binding.btnTienChi.setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.rounded_blue));
         binding.btnTienChi.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));

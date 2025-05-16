@@ -87,6 +87,7 @@ public class AddDirectoryActivity extends AppCompatActivity {
             ).show();
             binding.edtName.getEditText().requestFocus();
         }
+
     }
 
     private void addDanhMuc(DanhMuc danhMuc) {
